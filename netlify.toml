@@ -1,0 +1,38 @@
+# Configuration Netlify — Phenix Rapports
+#
+# L'app est 100% statique (HTML + CSS + JS côté client).
+# Aucun build n'est nécessaire côté Netlify : on lui dit simplement
+# de servir le dossier racine tel quel, sans toucher aux node_modules
+# ni aux fichiers de migration SQL.
+
+[build]
+  # Aucune commande de build (le styles.css est déjà précompilé localement)
+  command = ""
+  # Le dossier racine du repo est publié tel quel
+  publish = "."
+
+# Optimisations désactivées (déjà gérées en amont, et le bundling Netlify
+# peut casser le HTML inline)
+[build.processing]
+  skip_processing = true
+
+# Indique à Netlify de ne pas exécuter npm install
+# (les devDependencies sharp/tailwindcss ne servent qu'en local pour
+# régénérer les icônes et le CSS, pas pour le déploiement)
+[build.environment]
+  NETLIFY_USE_PNPM = "false"
+  NPM_FLAGS = "--prefix=/dev/null"
+
+# Headers déjà définis dans _headers ; netlify.toml prend le relais
+# pour les MIME types critiques au cas où.
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Content-Type = "application/javascript"
+    Cache-Control = "no-cache"
+    Service-Worker-Allowed = "/"
