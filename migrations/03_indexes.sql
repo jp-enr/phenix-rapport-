@@ -71,15 +71,15 @@ CREATE INDEX IF NOT EXISTS idx_chantiers_code_trgm     ON public.chantiers USING
 CREATE INDEX IF NOT EXISTS idx_chantiers_nom_trgm      ON public.chantiers USING gin (nom gin_trgm_ops);
 
 -- ---------------------------------------------------------------------
--- VÉRIFICATION
+-- VÉRIFICATION — liste les index créés avec leur taille
 -- ---------------------------------------------------------------------
 SELECT
-  schemaname,
-  tablename,
-  indexname,
-  pg_size_pretty(pg_relation_size(indexrelid)) AS taille
+  pi.schemaname,
+  pi.tablename,
+  pi.indexname,
+  pg_size_pretty(pg_relation_size(pc.oid)) AS taille
 FROM pg_indexes pi
 JOIN pg_class pc ON pc.relname = pi.indexname
 WHERE pi.schemaname = 'public'
   AND pi.indexname LIKE 'idx_%'
-ORDER BY tablename, indexname;
+ORDER BY pi.tablename, pi.indexname;
