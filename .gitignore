@@ -1,0 +1,62 @@
+# Secrets — NE JAMAIS commiter
+.env
+*.pem
+*.key
+*.cert
+*.p12
+certificats/
+
+# Base de donnees locale
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.python-version
+*.egg-info/
+
+# Node
+node_modules/
+
+# Mac
+.DS_Store
+
+# Backups locaux du fichier index.html (l'historique git remplace ces backups)
+index.html.backup-*
+*.backup-*
+
+# Archives Netlify locales (re-générables)
+Archive.zip
+
+# Outils internes Claude
+.claude/
+
+# Fichiers généraux temporaires
+*.tmp
+
+# ===== Fichiers d'un AUTRE projet présent dans le même dossier =====
+# (dashboard / collecteur PV Phenix Solar — code Python sans rapport avec l'app HTML)
+api/
+collecteur/
+test_api_s4e.py
+.env.example
+data/
+
+# README.md d'un autre projet — on ne le commit pas dans ce repo
+# (s'il faut un README pour l'app HTML, il sera créé séparément plus tard)
+README.md
+
+# Editeurs
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+logs/
