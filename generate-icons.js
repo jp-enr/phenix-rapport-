@@ -1,5 +1,10 @@
 // Génère les icônes PWA à partir du logo Phenix.
 // Lancer : node generate-icons.js
+//
+// NB : sharp n'est plus en devDependencies (échouait au build Netlify).
+// Pour ré-exécuter ce script localement, installer sharp à la volée :
+//   npm install sharp
+//   node generate-icons.js
 const sharp = require("sharp");
 const fs = require("fs");
 
