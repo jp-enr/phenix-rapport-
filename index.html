@@ -67,7 +67,11 @@
 <body class="bg-gray-50 min-h-screen text-gray-900 antialiased">
   <!-- ===== Bandeau hors-ligne (apparaît automatiquement quand pas de réseau) ===== -->
   <div id="offline-banner" style="display:none; position:fixed; top:0; left:0; right:0; z-index:9999; background:#F2AC10; color:#08305F; text-align:center; padding:6px 12px; font-size:13px; font-weight:600; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-    ⚠ Mode hors-ligne — Les modifications seront synchronisées à la reconnexion
+    ⚠ Hors-ligne — Lecture des données récentes possible. Les modifications nécessitent une connexion.
+  </div>
+  <!-- ===== Toast retour en ligne (apparaît brièvement quand le réseau revient) ===== -->
+  <div id="online-toast" style="display:none; position:fixed; top:0; left:0; right:0; z-index:9999; background:#16A34A; color:#fff; text-align:center; padding:6px 12px; font-size:13px; font-weight:600; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+    ✓ Connexion rétablie
   </div>
   <!-- ===== Bandeau "mise à jour disponible" (apparaît quand un nouveau service worker est prêt) ===== -->
   <div id="update-banner" style="display:none; position:fixed; bottom:16px; left:50%; transform:translateX(-50%); z-index:9999; background:#0D4484; color:#fff; padding:10px 16px; border-radius:8px; font-size:13px; box-shadow:0 4px 12px rgba(0,0,0,0.2); display:none; align-items:center; gap:12px;">
@@ -143,7 +147,7 @@
             </button>
           </form>
 
-          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v2.1</p>
+          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v2.2</p>
         </div>
       </div>
     </template>
@@ -3346,6 +3350,11 @@
           this.user = null;
           this.view = "dashboard";
           this.chantiers = [];
+          // Sécurité : vide le cache Supabase pour éviter qu'un autre utilisateur
+          // voie les données du précédent (REST data + photos en cache)
+          if (typeof window.__phenixClearSupabaseCache === "function") {
+            window.__phenixClearSupabaseCache();
+          }
         },
 
         // ===== NAVIGATION =====
@@ -7570,15 +7579,33 @@
   <!-- ===== PWA : enregistrement du service worker + gestion hors-ligne ===== -->
   <script>
     (function () {
-      // 1) Bandeau hors-ligne — affichage selon l'état réseau
+      // 1) Bandeau hors-ligne + toast de retour en ligne
       var banner = document.getElementById("offline-banner");
+      var onlineToast = document.getElementById("online-toast");
+      var wasOffline = !navigator.onLine; // état initial
       function updateOnlineStatus() {
-        if (!banner) return;
-        banner.style.display = navigator.onLine ? "none" : "block";
+        var isOnline = navigator.onLine;
+        if (banner) banner.style.display = isOnline ? "none" : "block";
+        // Si on était offline et qu'on repasse online → toast "connexion rétablie" 3s
+        if (isOnline && wasOffline && onlineToast) {
+          onlineToast.style.display = "block";
+          setTimeout(function () { onlineToast.style.display = "none"; }, 3000);
+        }
+        wasOffline = !isOnline;
       }
       window.addEventListener("online", updateOnlineStatus);
       window.addEventListener("offline", updateOnlineStatus);
       updateOnlineStatus();
+
+      // Helper exposé : vide le cache Supabase via message au Service Worker
+      // Appelé à la déconnexion pour ne pas exposer les données de l'utilisateur précédent
+      window.__phenixClearSupabaseCache = function () {
+        try {
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: "CLEAR_SUPABASE_CACHE" });
+          }
+        } catch (e) { /* silencieux */ }
+      };
 
       // 2) Bouton "Installer l'app" (Android / Chrome / Edge desktop)
       var deferredPrompt = null;

@@ -1,0 +1,95 @@
+=====================================================================
+  ACTIVATION DES BACKUPS — Supabase
+=====================================================================
+
+Ce fichier n'est PAS du SQL. C'est une checklist d'actions à faire dans
+le dashboard Supabase (interface web) pour s'assurer que tes données
+sont sauvegardées et restaurables.
+
+---------------------------------------------------------------------
+1) VÉRIFIER LES BACKUPS AUTOMATIQUES
+---------------------------------------------------------------------
+
+→ Va sur https://supabase.com/dashboard
+→ Sélectionne ton projet (svjdtykwnaaendgoqhrk)
+→ Sidebar gauche : Database → Backups
+
+Selon ton plan :
+
+  Plan Free :
+    - Backups journaliers (daily) gardés 7 jours
+    - Pas de PITR (Point-In-Time-Recovery)
+    - C'est suffisant pour démarrer mais limité.
+
+  Plan Pro (25$/mois) :
+    - PITR (restauration à n'importe quelle seconde des 7 derniers jours)
+    - Backups journaliers gardés 14 jours
+    - Recommandé dès que l'app est en prod réelle.
+
+→ Si tu es en Free et que les données deviennent critiques, upgrade Pro
+  vaut le coup. Sinon, complète avec un export manuel régulier (point 2).
+
+---------------------------------------------------------------------
+2) EXPORT MANUEL (à faire 1x/semaine en mode Free)
+---------------------------------------------------------------------
+
+Sur la page Database → Backups, tu peux télécharger un dump SQL complet.
+
+Sinon, tu peux exporter depuis la CLI :
+  npx supabase db dump -p <password> --db-url "<URL connection string>"
+
+À garder dans un endroit sûr (Drive, disque externe, etc.).
+
+---------------------------------------------------------------------
+3) VÉRIFIER QUE TU PEUX RESTAURER
+---------------------------------------------------------------------
+
+Le pire backup est celui qu'on n'a jamais testé. UNE FOIS, essaye de :
+
+  a) Créer un projet Supabase "test-restore"
+  b) Restaurer un backup récent dessus
+  c) Vérifier que les tables sont bien là, avec les données
+
+→ Ça t'assure que si un jour il y a un drame, tu sais déjà comment
+  procéder. 30 minutes de test = sérénité durable.
+
+---------------------------------------------------------------------
+4) BACKUP DES PHOTOS (Storage)
+---------------------------------------------------------------------
+
+Les backups Supabase ne couvrent QUE la base de données, pas le Storage.
+Les photos uploadées dans le bucket "rapports Photos" doivent être
+sauvegardées séparément.
+
+Options :
+
+  a) Via le dashboard : Storage → bucket → sélectionner tout → Download
+     (limité aux petits volumes, manuel)
+
+  b) Via la CLI Supabase :
+       npx supabase storage download --bucket "rapports Photos" \
+         --recursive --local-path ./photos_backup
+
+  c) Via un script automatisé (rclone, S3 sync, etc.) — pour la suite
+
+→ Recommandation : 1x par mois, télécharger l'archive des photos.
+
+---------------------------------------------------------------------
+5) SUIVI ET ALERTES
+---------------------------------------------------------------------
+
+Active les alertes dans Supabase (Settings → General → Notifications) :
+  - Backups failed
+  - Database approaching limits
+  - Storage approaching limits
+
+Ces alertes arrivent par email sur ton compte Supabase.
+
+=====================================================================
+EN RÉSUMÉ — actions à faire MAINTENANT (15 min) :
+
+  □ Aller voir Database → Backups et vérifier qu'il y a un backup récent
+  □ Télécharger un dump manuel et le mettre dans Drive/disque
+  □ Activer les notifications par email
+  □ Décider : rester en Free ou passer Pro (PITR)
+=====================================================================
