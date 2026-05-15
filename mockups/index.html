@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mockups navigation mobile — Phenix Rapports</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+    .phone-frame {
+      width: 100%;
+      max-width: 380px;
+      height: 720px;
+      margin: 0 auto;
+      border: 12px solid #1f2937;
+      border-radius: 36px;
+      overflow: hidden;
+      position: relative;
+      background: #f9fafb;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    }
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      position: relative;
+    }
+    .phenix-blue { background-color: #0D4484; }
+    .text-phenix-blue { color: #0D4484; }
+    .text-phenix-blue-dark { color: #08305F; }
+    .phenix-yellow { background-color: #F2AC10; }
+    .text-phenix-yellow { color: #F2AC10; }
+    .bg-phenix-blue-light { background-color: #E5EDF6; }
+
+    /* Style commun des cartes chantier */
+    .chantier-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      border: 1px solid #e5e7eb;
+    }
+
+    /* Label sous chaque mockup */
+    .mockup-label {
+      text-align: center;
+      margin-top: 12px;
+      font-weight: 600;
+      color: #374151;
+    }
+    .mockup-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-right: 6px;
+    }
+    .tag-current { background: #fee2e2; color: #991b1b; }
+    .tag-proposed-a { background: #dcfce7; color: #166534; }
+    .tag-proposed-b { background: #dbeafe; color: #1e40af; }
+    .tag-proposed-c { background: #fef3c7; color: #92400e; }
+  </style>
+</head>
+<body class="bg-gray-100 py-8 px-4">
+
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-2xl font-bold text-center text-gray-900 mb-2">Mockups navigation mobile</h1>
+    <p class="text-center text-gray-600 mb-8">Aperçu côte à côte de l'actuel et des 3 options proposées</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+      <!-- ============ ACTUEL ============ -->
+      <div>
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <!-- Header actuel (compact, petits boutons) -->
+            <div class="phenix-blue text-white px-3 py-2.5 flex items-center justify-between sticky top-0 z-10 shadow-md">
+              <div class="flex items-center gap-2">
+                <div class="bg-white rounded px-1.5 py-0.5">
+                  <span class="text-phenix-blue font-bold text-[10px]">PS</span>
+                </div>
+                <span class="text-phenix-yellow text-[9px] font-medium hidden sm:inline">RAPPORTS</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <button class="text-[11px] phenix-yellow text-phenix-blue-dark font-bold px-1.5 py-1 rounded">📊</button>
+                <button class="text-[11px] bg-white/10 text-white px-1.5 py-1 rounded">🏗</button>
+                <button class="text-[11px] bg-white/10 text-white px-1.5 py-1 rounded">👥</button>
+                <button class="text-[11px] bg-white/10 text-white px-1.5 py-1 rounded">↪</button>
+              </div>
+            </div>
+
+            <!-- Contenu (vue dashboard) -->
+            <div class="p-3">
+              <h2 class="text-lg font-bold text-gray-900 mb-1">Tableau de bord</h2>
+              <p class="text-xs text-gray-600 mb-3">Vue d'ensemble</p>
+
+              <input type="text" placeholder="🔍  Rechercher…" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm mb-3" />
+
+              <div class="grid grid-cols-2 gap-2 mb-3">
+                <div class="bg-white rounded-lg p-3 border border-gray-200">
+                  <p class="text-2xl font-bold text-phenix-blue">8</p>
+                  <p class="text-[10px] text-gray-600">Chantiers actifs</p>
+                </div>
+                <div class="bg-white rounded-lg p-3 border border-gray-200">
+                  <p class="text-2xl font-bold text-phenix-yellow">12</p>
+                  <p class="text-[10px] text-gray-600">Visites ce mois</p>
+                </div>
+              </div>
+
+              <p class="text-xs font-semibold text-gray-700 mb-2">Chantiers récents</p>
+              <div class="chantier-card">
+                <p class="font-semibold text-sm text-gray-900">CH-2024-12</p>
+                <p class="text-xs text-gray-500">Ombrières Carrefour Lyon</p>
+              </div>
+              <div class="chantier-card">
+                <p class="font-semibold text-sm text-gray-900">CH-2024-11</p>
+                <p class="text-xs text-gray-500">Toiture LIDL Marseille</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mockup-label">
+          <span class="mockup-tag tag-current">Actuel</span>
+          <span class="text-sm">Nav haut (petite)</span>
+        </div>
+      </div>
+
+      <!-- ============ OPTION A : BOTTOM BAR ============ -->
+      <div>
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <!-- Header simplifié -->
+            <div class="phenix-blue text-white px-4 py-3 flex items-center justify-between sticky top-0 z-10 shadow-md">
+              <div class="flex items-center gap-2">
+                <div class="bg-white rounded px-2 py-0.5">
+                  <span class="text-phenix-blue font-bold text-xs">PS</span>
+                </div>
+                <span class="text-phenix-yellow text-xs font-semibold">Phenix Rapports</span>
+              </div>
+              <button class="text-white/80 text-xl leading-none">↪</button>
+            </div>
+
+            <!-- Contenu -->
+            <div class="p-3 pb-20">
+              <h2 class="text-lg font-bold text-gray-900 mb-1">Tableau de bord</h2>
+              <p class="text-xs text-gray-600 mb-3">Vue d'ensemble</p>
+
+              <input type="text" placeholder="🔍  Rechercher…" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm mb-3" />
+
+              <div class="grid grid-cols-2 gap-2 mb-3">
+                <div class="bg-white rounded-lg p-3 border border-gray-200">
+                  <p class="text-2xl font-bold text-phenix-blue">8</p>
+                  <p class="text-[10px] text-gray-600">Chantiers actifs</p>
+                </div>
+                <div class="bg-white rounded-lg p-3 border border-gray-200">
+                  <p class="text-2xl font-bold text-phenix-yellow">12</p>
+                  <p class="text-[10px] text-gray-600">Visites ce mois</p>
+                </div>
+              </div>
+
+              <p class="text-xs font-semibold text-gray-700 mb-2">Chantiers récents</p>
+              <div class="chantier-card">
+                <p class="font-semibold text-sm text-gray-900">CH-2024-12</p>
+                <p class="text-xs text-gray-500">Ombrières Carrefour Lyon</p>
+              </div>
+              <div class="chantier-card">
+                <p class="font-semibold text-sm text-gray-900">CH-2024-11</p>
+                <p class="text-xs text-gray-500">Toiture LIDL Marseille</p>
+              </div>
+            </div>
+
+            <!-- Bottom navigation -->
+            <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 grid grid-cols-3 shadow-lg">
+              <button class="py-2.5 flex flex-col items-center gap-0.5 border-t-2 border-phenix-blue bg-blue-50">
+                <span class="text-xl">📊</span>
+                <span class="text-[11px] font-semibold text-phenix-blue">Tableau</span>
+              </button>
+              <button class="py-2.5 flex flex-col items-center gap-0.5 border-t-2 border-transparent">
+                <span class="text-xl">🏗</span>
+                <span class="text-[11px] font-medium text-gray-600">Chantiers</span>
+              </button>
+              <button class="py-2.5 flex flex-col items-center gap-0.5 border-t-2 border-transparent">
+                <span class="text-xl">👥</span>
+                <span class="text-[11px] font-medium text-gray-600">Intervenants</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="mockup-label">
+          <span class="mockup-tag tag-proposed-a">Option A</span>
+          <span class="text-sm">Bottom bar</span>
+        </div>
+      </div>
+
+      <!-- ============ OPTION B : GROS BOUTONS HAUT ============ -->
+      <div>
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <!-- Header avec logo -->
+            <div class="phenix-blue text-white px-4 py-2.5 flex items-center justify-between shadow-md sticky top-0 z-10">
+              <div class="flex items-center gap-2">
+                <div class="bg-white rounded px-2 py-0.5">
+                  <span class="text-phenix-blue font-bold text-xs">PS</span>
+                </div>
+                <span class="text-phenix-yellow text-xs font-semibold">Phenix Rapports</span>
+              </div>
+              <button class="text-white/80 text-xl leading-none">↪</button>
+            </div>
+            <!-- Nav gros boutons -->
+            <div class="bg-white border-b border-gray-200 grid grid-cols-3 sticky top-[44px] z-10">
+              <button class="py-3 flex flex-col items-center gap-0.5 border-b-3 border-phenix-blue bg-blue-50">
+                <span class="text-lg">📊</span>
+                <span class="text-[11px] font-bold text-phenix-blue">TABLEAU</span>
+              </button>
+              <button class="py-3 flex flex-col items-center gap-0.5 border-b-3 border-transparent">
+                <span class="text-lg">🏗</span>
+                <span class="text-[11px] font-semibold text-gray-700">CHANTIERS</span>
+              </button>
+              <button class="py-3 flex flex-col items-center gap-0.5 border-b-3 border-transparent">
+                <span class="text-lg">👥</span>
+                <span class="text-[11px] font-semibold text-gray-700">INTERV.</span>
+              </button>
+            </div>
+
+            <!-- Contenu -->
+            <div class="p-3">
+              <h2 class="text-lg font-bold text-gray-900 mb-1">Tableau de bord</h2>
+              <p class="text-xs text-gray-600 mb-3">Vue d'ensemble</p>
+
+              <input type="text" placeholder="🔍  Rechercher…" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm mb-3" />
+
+              <div class="grid grid-cols-2 gap-2 mb-3">
+                <div class="bg-white rounded-lg p-3 border border-gray-200">
+                  <p class="text-2xl font-bold text-phenix-blue">8</p>
+                  <p class="text-[10px] text-gray-600">Chantiers actifs</p>
+                </div>
+                <div class="bg-white rounded-lg p-3 border border-gray-200">
+                  <p class="text-2xl font-bold text-phenix-yellow">12</p>
+                  <p class="text-[10px] text-gray-600">Visites ce mois</p>
+                </div>
+              </div>
+
+              <p class="text-xs font-semibold text-gray-700 mb-2">Chantiers récents</p>
+              <div class="chantier-card">
+                <p class="font-semibold text-sm text-gray-900">CH-2024-12</p>
+                <p class="text-xs text-gray-500">Ombrières Carrefour Lyon</p>
+              </div>
+              <div class="chantier-card">
+                <p class="font-semibold text-sm text-gray-900">CH-2024-11</p>
+                <p class="text-xs text-gray-500">Toiture LIDL Marseille</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mockup-label">
+          <span class="mockup-tag tag-proposed-b">Option B</span>
+          <span class="text-sm">Plus gros en haut</span>
+        </div>
+      </div>
+
+      <!-- ============ OPTION C : HAMBURGER ============ -->
+      <div>
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <!-- Header avec hamburger -->
+            <div class="phenix-blue text-white px-4 py-3 flex items-center justify-between sticky top-0 z-10 shadow-md">
+              <div class="flex items-center gap-3">
+                <button class="text-white text-2xl leading-none">☰</button>
+                <div class="bg-white rounded px-2 py-0.5">
+                  <span class="text-phenix-blue font-bold text-xs">PS</span>
+                </div>
+                <span class="text-phenix-yellow text-xs font-semibold">Phenix Rapports</span>
+              </div>
+              <button class="text-white/80 text-xl leading-none">↪</button>
+            </div>
+
+            <!-- Contenu (plus de place) -->
+            <div class="p-3">
+              <h2 class="text-lg font-bold text-gray-900 mb-1">Tableau de bord</h2>
+              <p class="text-xs text-gray-600 mb-3">Vue d'ensemble</p>
+
+              <input type="text" placeholder="🔍  Rechercher…" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm mb-3" />
+
+              <div class="grid grid-cols-2 gap-2 mb-3">
+                <div class="bg-white rounded-lg p-3 border border-gray-200">
+                  <p class="text-2xl font-bold text-phenix-blue">8</p>
+                  <p class="text-[10px] text-gray-600">Chantiers actifs</p>
+                </div>
+                <div class="bg-white rounded-lg p-3 border border-gray-200">
+                  <p class="text-2xl font-bold text-phenix-yellow">12</p>
+                  <p class="text-[10px] text-gray-600">Visites ce mois</p>
+                </div>
+              </div>
+
+              <p class="text-xs font-semibold text-gray-700 mb-2">Chantiers récents</p>
+              <div class="chantier-card">
+                <p class="font-semibold text-sm text-gray-900">CH-2024-12</p>
+                <p class="text-xs text-gray-500">Ombrières Carrefour Lyon</p>
+              </div>
+              <div class="chantier-card">
+                <p class="font-semibold text-sm text-gray-900">CH-2024-11</p>
+                <p class="text-xs text-gray-500">Toiture LIDL Marseille</p>
+              </div>
+              <div class="chantier-card">
+                <p class="font-semibold text-sm text-gray-900">CH-2024-10</p>
+                <p class="text-xs text-gray-500">Carport entreprise Solar SAS</p>
+              </div>
+            </div>
+
+            <!-- Drawer du menu (semi-ouvert pour montrer le concept) -->
+            <div class="absolute top-0 left-0 bottom-0 w-2/3 bg-white shadow-2xl" style="display:none">
+              <div class="phenix-blue text-white px-4 py-3 flex items-center justify-between">
+                <span class="font-bold">MENU</span>
+                <button class="text-white text-xl">×</button>
+              </div>
+              <div class="p-3 space-y-1">
+                <button class="w-full text-left px-3 py-3 bg-blue-50 text-phenix-blue font-bold rounded">📊 Tableau de bord</button>
+                <button class="w-full text-left px-3 py-3 text-gray-700 rounded hover:bg-gray-50">🏗 Chantiers</button>
+                <button class="w-full text-left px-3 py-3 text-gray-700 rounded hover:bg-gray-50">👥 Intervenants</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mockup-label">
+          <span class="mockup-tag tag-proposed-c">Option C</span>
+          <span class="text-sm">Menu hamburger ☰</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Aperçu du menu hamburger ouvert -->
+    <div class="mt-12 max-w-md mx-auto">
+      <p class="text-center text-sm text-gray-600 mb-3">↓ Option C — Aperçu du menu hamburger <strong>ouvert</strong> ↓</p>
+      <div class="phone-frame">
+        <div class="phone-screen relative">
+          <!-- Overlay sombre -->
+          <div class="absolute inset-0 bg-black/50 z-20"></div>
+          <!-- Header en arrière-plan -->
+          <div class="phenix-blue text-white px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <button class="text-white text-2xl leading-none">☰</button>
+              <span class="text-phenix-yellow text-xs font-semibold">Phenix</span>
+            </div>
+            <button class="text-white/80 text-xl leading-none">↪</button>
+          </div>
+          <div class="p-3 opacity-30">
+            <h2 class="text-lg font-bold text-gray-900">Tableau de bord</h2>
+          </div>
+          <!-- Drawer ouvert -->
+          <div class="absolute top-0 left-0 bottom-0 w-3/4 bg-white shadow-2xl z-30">
+            <div class="phenix-blue text-white px-4 py-3 flex items-center justify-between">
+              <span class="font-bold">MENU</span>
+              <button class="text-white text-xl">×</button>
+            </div>
+            <div class="p-3 space-y-1">
+              <button class="w-full text-left px-3 py-3 bg-blue-50 text-phenix-blue font-bold rounded text-sm">📊 Tableau de bord</button>
+              <button class="w-full text-left px-3 py-3 text-gray-700 rounded hover:bg-gray-50 text-sm">🏗 Chantiers</button>
+              <button class="w-full text-left px-3 py-3 text-gray-700 rounded hover:bg-gray-50 text-sm">👥 Intervenants</button>
+              <hr class="my-3 border-gray-200" />
+              <button class="w-full text-left px-3 py-3 text-red-600 rounded hover:bg-red-50 text-sm">↪ Déconnexion</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparatif rapide -->
+    <div class="mt-12 bg-white rounded-lg shadow p-6 max-w-4xl mx-auto">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">Synthèse rapide</h2>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b-2 border-gray-200">
+            <th class="text-left py-2 px-3 font-semibold text-gray-700">Critère</th>
+            <th class="text-center py-2 px-3 font-semibold text-red-700">Actuel</th>
+            <th class="text-center py-2 px-3 font-semibold text-green-700">A — Bottom</th>
+            <th class="text-center py-2 px-3 font-semibold text-blue-700">B — Gros haut</th>
+            <th class="text-center py-2 px-3 font-semibold text-yellow-700">C — Hamburger</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-gray-100">
+            <td class="py-2 px-3 text-gray-700">Accessible au pouce</td>
+            <td class="text-center text-2xl">❌</td>
+            <td class="text-center text-2xl">✅</td>
+            <td class="text-center text-2xl">⚠️</td>
+            <td class="text-center text-2xl">⚠️</td>
+          </tr>
+          <tr class="border-b border-gray-100">
+            <td class="py-2 px-3 text-gray-700">Visibilité de la vue active</td>
+            <td class="text-center text-2xl">⚠️</td>
+            <td class="text-center text-2xl">✅</td>
+            <td class="text-center text-2xl">✅</td>
+            <td class="text-center text-2xl">❌</td>
+          </tr>
+          <tr class="border-b border-gray-100">
+            <td class="py-2 px-3 text-gray-700">Espace dispo pour le contenu</td>
+            <td class="text-center text-2xl">✅</td>
+            <td class="text-center text-2xl">⚠️</td>
+            <td class="text-center text-2xl">❌</td>
+            <td class="text-center text-2xl">✅</td>
+          </tr>
+          <tr class="border-b border-gray-100">
+            <td class="py-2 px-3 text-gray-700">Look moderne / pro</td>
+            <td class="text-center text-2xl">⚠️</td>
+            <td class="text-center text-2xl">✅</td>
+            <td class="text-center text-2xl">⚠️</td>
+            <td class="text-center text-2xl">⚠️</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3 text-gray-700">Nb clics pour changer de vue</td>
+            <td class="text-center font-semibold">1</td>
+            <td class="text-center font-semibold text-green-700">1</td>
+            <td class="text-center font-semibold text-green-700">1</td>
+            <td class="text-center font-semibold text-yellow-700">2</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="text-xs text-gray-500 mt-4">⚠️ Ces mockups sont juste des aperçus visuels — aucune fonctionnalité n'est touchée tant que tu n'as pas choisi.</p>
+    </div>
+  </div>
+
+</body>
+</html>
