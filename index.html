@@ -60,6 +60,9 @@
     /* Empêcher le zoom sur les inputs iOS */
     @media screen and (max-width: 640px) {
       input, select, textarea { font-size: 16px !important; }
+      /* Padding bas pour ne pas que la bottom navigation masque le contenu.
+         Sur iPhone avec encoche, env() ajoute la safe area. */
+      body { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
     }
   </style>
 </head>
@@ -147,7 +150,7 @@
             </button>
           </form>
 
-          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v2.2</p>
+          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v2.3</p>
         </div>
       </div>
     </template>
@@ -156,36 +159,37 @@
     <template x-if="!loading && user">
       <div>
         <!-- Header -->
+        <!-- Sur mobile : version simplifiée (logo + déconnexion).
+             Sur desktop (sm+) : nav complète comme avant. -->
         <header class="bg-phenix-blue text-white shadow-md sticky top-0 z-50">
           <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <button @click="goDashboard()" class="flex items-center gap-3">
               <div class="bg-white rounded px-2 py-1 flex items-center justify-center" style="height: 36px;">
-                <img :src="window.PHENIX_LOGO_BASE64" alt="Phenix Solar" class="h-6 w-auto" 
+                <img :src="window.PHENIX_LOGO_BASE64" alt="Phenix Solar" class="h-6 w-auto"
                   onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
                 <span class="text-phenix-blue font-bold text-sm" style="display: none;">PHENIX SOLAR</span>
               </div>
-              <p class="hidden sm:block text-phenix-yellow text-xs font-medium">RAPPORTS DE VISITE</p>
+              <p class="text-phenix-yellow text-xs font-medium">RAPPORTS DE VISITE</p>
             </button>
             <div class="flex items-center gap-2 sm:gap-4">
-              <button @click="goDashboard()" 
-                class="text-xs sm:text-sm bg-white/10 hover:bg-white/20 px-2 sm:px-3 py-1.5 rounded-md transition-colors"
+              <!-- Boutons de nav : MASQUÉS sur mobile (remplacés par la bottom bar plus bas) -->
+              <button @click="goDashboard()"
+                class="hidden sm:inline-block text-sm bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-md transition-colors"
                 :class="view === 'dashboard' ? 'bg-phenix-yellow text-phenix-blue-dark font-bold hover:bg-phenix-yellow' : ''">
-                <span class="hidden sm:inline">📊 Tableau de bord</span>
-                <span class="sm:hidden">📊</span>
+                📊 Tableau de bord
               </button>
-              <button @click="goHome()" 
-                class="text-xs sm:text-sm bg-white/10 hover:bg-white/20 px-2 sm:px-3 py-1.5 rounded-md transition-colors"
+              <button @click="goHome()"
+                class="hidden sm:inline-block text-sm bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-md transition-colors"
                 :class="view === 'chantiers' || view === 'chantier' || view === 'visite' || view === 'visite-interne' ? 'bg-phenix-yellow text-phenix-blue-dark font-bold hover:bg-phenix-yellow' : ''">
-                <span class="hidden sm:inline">🏗 Chantiers</span>
-                <span class="sm:hidden">🏗</span>
+                🏗 Chantiers
               </button>
-              <button @click="goIntervenants()" 
-                class="text-xs sm:text-sm bg-white/10 hover:bg-white/20 px-2 sm:px-3 py-1.5 rounded-md transition-colors"
+              <button @click="goIntervenants()"
+                class="hidden sm:inline-block text-sm bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-md transition-colors"
                 :class="view === 'intervenants' ? 'bg-phenix-yellow text-phenix-blue-dark font-bold hover:bg-phenix-yellow' : ''">
-                <span class="hidden sm:inline">👥 Intervenants</span>
-                <span class="sm:hidden">👥</span>
+                👥 Intervenants
               </button>
               <span class="hidden md:inline text-sm text-blue-100" x-text="user.email"></span>
+              <!-- Déconnexion : toujours visible (mobile + desktop) -->
               <button @click="logout()" class="text-xs sm:text-sm bg-white/10 hover:bg-white/20 px-2 sm:px-3 py-1.5 rounded-md transition-colors">
                 <span class="hidden sm:inline">Déconnexion</span>
                 <span class="sm:hidden">↪</span>
@@ -193,6 +197,35 @@
             </div>
           </div>
         </header>
+
+        <!-- ===== BOTTOM NAVIGATION (MOBILE UNIQUEMENT) =====
+             Reproduction du standard mobile : 3 boutons larges en bas d'écran
+             toujours accessibles au pouce. Cachée sur tablette/desktop (sm+).
+             Pour ne pas masquer le contenu, on ajoute pb-20 sm:pb-0 sur le body via style. -->
+        <nav class="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-[0_-2px_8px_rgba(0,0,0,0.08)] grid grid-cols-3"
+             style="padding-bottom: env(safe-area-inset-bottom, 0px);">
+          <button @click="goDashboard()"
+            class="py-2 flex flex-col items-center gap-0.5 border-t-2 transition-colors"
+            :class="view === 'dashboard' ? 'border-phenix-blue bg-blue-50' : 'border-transparent active:bg-gray-50'">
+            <span class="text-2xl leading-none">📊</span>
+            <span class="text-[11px] font-semibold leading-tight"
+                  :class="view === 'dashboard' ? 'text-phenix-blue' : 'text-gray-600'">Tableau</span>
+          </button>
+          <button @click="goHome()"
+            class="py-2 flex flex-col items-center gap-0.5 border-t-2 transition-colors"
+            :class="view === 'chantiers' || view === 'chantier' || view === 'visite' || view === 'visite-interne' ? 'border-phenix-blue bg-blue-50' : 'border-transparent active:bg-gray-50'">
+            <span class="text-2xl leading-none">🏗</span>
+            <span class="text-[11px] font-semibold leading-tight"
+                  :class="view === 'chantiers' || view === 'chantier' || view === 'visite' || view === 'visite-interne' ? 'text-phenix-blue' : 'text-gray-600'">Chantiers</span>
+          </button>
+          <button @click="goIntervenants()"
+            class="py-2 flex flex-col items-center gap-0.5 border-t-2 transition-colors"
+            :class="view === 'intervenants' ? 'border-phenix-blue bg-blue-50' : 'border-transparent active:bg-gray-50'">
+            <span class="text-2xl leading-none">👥</span>
+            <span class="text-[11px] font-semibold leading-tight"
+                  :class="view === 'intervenants' ? 'text-phenix-blue' : 'text-gray-600'">Intervenants</span>
+          </button>
+        </nav>
 
         <!-- ===== VUE TABLEAU DE BORD ===== -->
         <template x-if="view === 'dashboard'">
