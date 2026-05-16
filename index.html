@@ -397,7 +397,7 @@
                   <div class="flex-1 min-w-0">
                     <p class="text-sm font-bold text-amber-900">Brouillon en cours</p>
                     <p class="text-[11px] text-amber-700 truncate">
-                      <span x-text="dashBrouillon.numero_vc"></span> · <span x-text="dashBrouillon.chantierCode"></span> · modifié <span x-text="formatRelativeDate(dashBrouillon.updated_at)"></span>
+                      <span x-text="dashBrouillon.numero_vc"></span> · <span x-text="dashBrouillon.chantierNom || dashBrouillon.chantierCode"></span> · modifié <span x-text="formatRelativeDate(dashBrouillon.updated_at)"></span>
                     </p>
                   </div>
                   <button @click="reprendreBrouillon()"
@@ -437,7 +437,7 @@
                               </div>
                               <p class="text-xs text-gray-900 font-medium truncate" x-text="r.description_courte"></p>
                               <p class="text-[10px] text-gray-500 mt-0.5 truncate">
-                                <span x-text="r.chantierCode"></span><span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span>
+                                <span x-text="r.chantierNom || r.chantierCode"></span><span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span>
                               </p>
                             </button>
                           </template>
@@ -461,7 +461,7 @@
                               </div>
                               <p class="text-xs text-gray-900 font-medium truncate" x-text="r.description_courte"></p>
                               <p class="text-[10px] text-gray-500 mt-0.5 truncate">
-                                <span x-text="r.chantierCode"></span><span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span>
+                                <span x-text="r.chantierNom || r.chantierCode"></span><span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span>
                               </p>
                             </button>
                           </template>
@@ -485,7 +485,7 @@
                               </div>
                               <p class="text-xs text-gray-900 font-medium truncate" x-text="r.description_courte"></p>
                               <p class="text-[10px] text-gray-500 mt-0.5 truncate">
-                                <span x-text="r.chantierCode"></span><span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span>
+                                <span x-text="r.chantierNom || r.chantierCode"></span><span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span>
                               </p>
                             </button>
                           </template>
