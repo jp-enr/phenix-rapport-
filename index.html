@@ -150,7 +150,7 @@
             </button>
           </form>
 
-          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v2.4</p>
+          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v2.5</p>
         </div>
       </div>
     </template>
@@ -229,227 +229,243 @@
 
         <!-- ===== VUE TABLEAU DE BORD ===== -->
         <template x-if="view === 'dashboard'">
-          <main class="max-w-6xl mx-auto px-4 py-6">
-            <!-- En-tête + barre de recherche -->
-            <div class="mb-6">
-              <h1 class="text-2xl font-bold text-gray-900 mb-1">Tableau de bord</h1>
-              <p class="text-gray-600 text-sm">Vue d'ensemble de vos chantiers</p>
+          <main class="max-w-6xl mx-auto">
+            <!-- Hero banner avec dégradé Phenix (style phenix-centrales-s4e) -->
+            <div class="px-5 py-5 text-white shadow-md" style="background: linear-gradient(135deg, #0D4484, #08305F);">
+              <h1 class="text-xl font-bold mb-1">⚡ Tableau de bord</h1>
+              <p class="text-blue-100 text-xs">
+                <span x-show="user && user.email">Bonjour</span> ·
+                <span class="text-phenix-yellow font-semibold" x-text="dashStats.chantiersActifs + ' chantier' + (dashStats.chantiersActifs > 1 ? 's' : '') + ' actif' + (dashStats.chantiersActifs > 1 ? 's' : '')"></span>
+              </p>
             </div>
 
-            <!-- Barre de recherche globale -->
-            <div class="mb-6 relative">
-              <input type="text" x-model="searchQuery" @input="performSearch()"
-                placeholder="🔍 Rechercher un chantier, une visite, une réserve..."
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-phenix-blue text-base shadow-sm" />
-              
-              <!-- Résultats de recherche -->
-              <div x-show="searchQuery && searchResults.length > 0" 
-                class="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-y-auto z-30">
-                <template x-for="result in searchResults" :key="result.type + '-' + result.id">
-                  <button @click="openSearchResult(result)" 
-                    class="w-full text-left px-4 py-2.5 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 flex items-start gap-2">
-                    <span class="text-lg flex-shrink-0" x-text="result.icon"></span>
-                    <div class="flex-1 min-w-0">
-                      <p class="font-medium text-gray-900" x-text="result.title"></p>
-                      <p class="text-xs text-gray-500 truncate" x-text="result.subtitle"></p>
-                    </div>
-                    <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 flex-shrink-0" x-text="result.typeLabel"></span>
-                  </button>
-                </template>
-              </div>
-              <div x-show="searchQuery && searchResults.length === 0 && searchQuery.length >= 2" 
-                class="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 p-4 text-sm text-gray-500 z-30">
-                Aucun résultat pour "<span x-text="searchQuery"></span>"
-              </div>
-            </div>
+            <div class="px-4 py-4 -mt-3">
+              <!-- Barre de recherche surélevée -->
+              <div class="mb-5 relative">
+                <input type="text" x-model="searchQuery" @input="performSearch()"
+                  placeholder="🔍 Rechercher chantier, visite, réserve..."
+                  class="w-full px-4 py-3 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-phenix-blue text-base shadow-md ring-1 ring-gray-200" />
 
-            <!-- KPIs (4 cartes) -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-              <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-phenix-blue">
-                <p class="text-xs text-gray-500 uppercase font-medium">Chantiers actifs</p>
-                <p class="text-3xl font-bold text-phenix-blue mt-1" x-text="dashStats.chantiersActifs"></p>
-              </div>
-              <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-phenix-yellow">
-                <p class="text-xs text-gray-500 uppercase font-medium">Visites du mois</p>
-                <p class="text-3xl font-bold text-amber-600 mt-1" x-text="dashStats.visitesMois"></p>
-              </div>
-              <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-orange-400">
-                <p class="text-xs text-gray-500 uppercase font-medium">Réserves ouvertes</p>
-                <p class="text-3xl font-bold text-orange-600 mt-1" x-text="dashStats.reservesOuvertes"></p>
-              </div>
-              <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-red-500">
-                <p class="text-xs text-gray-500 uppercase font-medium">Escalades</p>
-                <p class="text-3xl font-bold text-red-600 mt-1" x-text="dashStats.escalades"></p>
-              </div>
-            </div>
-
-            <!-- Reprendre un brouillon -->
-            <template x-if="dashBrouillon">
-              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 flex items-center justify-between flex-wrap gap-2">
-                <div>
-                  <p class="text-sm font-medium text-blue-900">📝 Vous avez un brouillon en cours</p>
-                  <p class="text-xs text-blue-700 mt-0.5">
-                    <span x-text="dashBrouillon.numero_vc"></span> — <span x-text="dashBrouillon.chantierCode"></span> · 
-                    Modifié <span x-text="formatRelativeDate(dashBrouillon.updated_at)"></span>
-                  </p>
+                <!-- Résultats de recherche -->
+                <div x-show="searchQuery && searchResults.length > 0"
+                  class="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-y-auto z-30">
+                  <template x-for="result in searchResults" :key="result.type + '-' + result.id">
+                    <button @click="openSearchResult(result)"
+                      class="w-full text-left px-4 py-2.5 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 flex items-start gap-2">
+                      <span class="text-lg flex-shrink-0" x-text="result.icon"></span>
+                      <div class="flex-1 min-w-0">
+                        <p class="font-medium text-gray-900" x-text="result.title"></p>
+                        <p class="text-xs text-gray-500 truncate" x-text="result.subtitle"></p>
+                      </div>
+                      <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 flex-shrink-0" x-text="result.typeLabel"></span>
+                    </button>
+                  </template>
                 </div>
-                <button @click="reprendreBrouillon()" 
-                  class="bg-phenix-blue hover:bg-phenix-blue-dark text-white text-sm font-medium px-4 py-2 rounded-md">
-                  Reprendre
-                </button>
+                <div x-show="searchQuery && searchResults.length === 0 && searchQuery.length >= 2"
+                  class="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 p-4 text-sm text-gray-500 z-30">
+                  Aucun résultat pour "<span x-text="searchQuery"></span>"
+                </div>
               </div>
-            </template>
 
-            <!-- Section : Réserves urgentes (escalades) -->
-            <section class="mb-6" x-show="dashEscalades.length > 0">
-              <h2 class="text-lg font-bold text-red-700 mb-3 flex items-center gap-2">
-                🚨 Réserves urgentes — escalades
-                <span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full" x-text="dashEscalades.length"></span>
-              </h2>
-              <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-red-200">
-                <ul class="divide-y divide-gray-100">
+              <!-- KPI cards modernes : icône pastille + valeur + label clair -->
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 mb-5">
+                <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-200">
+                  <div class="flex items-center gap-2 mb-1">
+                    <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center text-base">🏗</div>
+                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Chantiers</p>
+                  </div>
+                  <p class="text-3xl font-bold text-phenix-blue leading-none" x-text="dashStats.chantiersActifs"></p>
+                  <p class="text-[10px] text-gray-500 mt-1">en cours</p>
+                </div>
+                <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-200">
+                  <div class="flex items-center gap-2 mb-1">
+                    <div class="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center text-base">📋</div>
+                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Visites</p>
+                  </div>
+                  <p class="text-3xl font-bold text-amber-600 leading-none" x-text="dashStats.visitesMois"></p>
+                  <p class="text-[10px] text-gray-500 mt-1">ce mois</p>
+                </div>
+                <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-200">
+                  <div class="flex items-center gap-2 mb-1">
+                    <div class="w-7 h-7 rounded-lg bg-orange-100 flex items-center justify-center text-base">📌</div>
+                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Réserves</p>
+                  </div>
+                  <p class="text-3xl font-bold text-orange-600 leading-none" x-text="dashStats.reservesOuvertes"></p>
+                  <p class="text-[10px] text-gray-500 mt-1">ouvertes</p>
+                </div>
+                <div class="bg-white rounded-xl p-3 shadow-sm border-2"
+                     :class="dashStats.escalades > 0 ? 'border-red-200' : 'border-gray-200'">
+                  <div class="flex items-center gap-2 mb-1">
+                    <div class="w-7 h-7 rounded-lg bg-red-100 flex items-center justify-center text-base">🚨</div>
+                    <p class="text-[10px] uppercase font-bold tracking-wider"
+                       :class="dashStats.escalades > 0 ? 'text-red-600' : 'text-gray-500'">Escalades</p>
+                  </div>
+                  <p class="text-3xl font-bold text-red-600 leading-none" x-text="dashStats.escalades"></p>
+                  <p class="text-[10px] mt-1 font-medium"
+                     :class="dashStats.escalades > 0 ? 'text-red-500' : 'text-gray-500'"
+                     x-text="dashStats.escalades > 0 ? 'à traiter' : 'aucune'"></p>
+                </div>
+              </div>
+
+              <!-- Brouillon en card mise en avant (dégradé jaune attractif) -->
+              <template x-if="dashBrouillon">
+                <div class="bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-xl p-3 mb-5 flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-amber-200 flex items-center justify-center text-xl flex-shrink-0">📝</div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-bold text-amber-900">Brouillon en cours</p>
+                    <p class="text-[11px] text-amber-700 truncate">
+                      <span x-text="dashBrouillon.numero_vc"></span> · <span x-text="dashBrouillon.chantierCode"></span> · modifié <span x-text="formatRelativeDate(dashBrouillon.updated_at)"></span>
+                    </p>
+                  </div>
+                  <button @click="reprendreBrouillon()"
+                    class="bg-phenix-blue hover:bg-phenix-blue-dark text-white text-xs font-bold px-3 py-1.5 rounded-lg flex-shrink-0">Reprendre →</button>
+                </div>
+              </template>
+
+            <!-- Section : Réserves urgentes (escalades) — en-tête rouge -->
+            <section class="mb-4" x-show="dashEscalades.length > 0">
+              <div class="bg-white rounded-xl shadow-sm border-2 border-red-100 overflow-hidden">
+                <div class="bg-red-50 px-4 py-2.5 flex items-center justify-between border-b border-red-100">
+                  <h2 class="text-sm font-bold text-red-700 flex items-center gap-2">🚨 Urgent — Escalades</h2>
+                  <span class="text-[10px] font-bold bg-red-600 text-white px-2 py-0.5 rounded-full" x-text="dashEscalades.length"></span>
+                </div>
+                <div class="divide-y divide-gray-100">
                   <template x-for="r in dashEscalades" :key="r.id">
-                    <li>
-                      <button @click="goToReserve(r)" class="w-full text-left p-4 hover:bg-red-50 flex items-center gap-3">
-                        <div class="flex-1 min-w-0">
-                          <p class="font-medium">
-                            <span class="text-phenix-blue mr-2" x-text="r.numero"></span>
-                            <span x-text="r.description_courte"></span>
-                          </p>
-                          <p class="text-xs text-gray-500 mt-0.5">
-                            <span x-text="r.chantierCode"></span>
-                            <span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span>
-                            <span x-show="r.echeance"> · 📅 <span x-text="formatDate(r.echeance)"></span></span>
-                          </p>
-                        </div>
-                        <span class="text-xs px-2 py-1 rounded-full font-bold bg-red-100 text-red-800 flex-shrink-0">
-                          🔔 <span x-text="r.nb_rappels"></span> rappels
-                        </span>
-                      </button>
-                    </li>
+                    <button @click="goToReserve(r)" class="w-full text-left p-3 hover:bg-red-50 flex items-center gap-2">
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">
+                          <span class="font-mono text-[10px] bg-gray-100 text-gray-600 px-1 py-0.5 rounded mr-1" x-text="r.numero"></span>
+                          <span x-text="r.description_courte"></span>
+                        </p>
+                        <p class="text-[11px] text-gray-500 mt-0.5 truncate">
+                          <span x-text="r.chantierCode"></span><span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span><span x-show="r.echeance"> · 📅 <span x-text="formatDate(r.echeance)"></span></span>
+                        </p>
+                      </div>
+                      <span class="text-[10px] font-bold bg-red-100 text-red-800 px-2 py-1 rounded-full flex-shrink-0">
+                        🔔 <span x-text="r.nb_rappels"></span>
+                      </span>
+                    </button>
                   </template>
-                </ul>
+                </div>
               </div>
             </section>
 
-            <!-- Section : Réserves en retard -->
-            <section class="mb-6" x-show="dashRetards.length > 0">
-              <h2 class="text-lg font-bold text-orange-700 mb-3 flex items-center gap-2">
-                ⏰ Réserves en retard
-                <span class="text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full" x-text="dashRetards.length"></span>
-              </h2>
-              <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-orange-200">
-                <ul class="divide-y divide-gray-100">
+            <!-- Section : Réserves en retard — en-tête orange -->
+            <section class="mb-4" x-show="dashRetards.length > 0">
+              <div class="bg-white rounded-xl shadow-sm border border-orange-200 overflow-hidden">
+                <div class="bg-orange-50 px-4 py-2.5 flex items-center justify-between border-b border-orange-100">
+                  <h2 class="text-sm font-bold text-orange-700 flex items-center gap-2">⏰ Réserves en retard</h2>
+                  <span class="text-[10px] font-bold bg-orange-600 text-white px-2 py-0.5 rounded-full" x-text="dashRetards.length"></span>
+                </div>
+                <div class="divide-y divide-gray-100">
                   <template x-for="r in dashRetards" :key="r.id">
-                    <li>
-                      <button @click="goToReserve(r)" class="w-full text-left p-4 hover:bg-orange-50 flex items-center gap-3">
-                        <div class="flex-1 min-w-0">
-                          <p class="font-medium">
-                            <span class="text-phenix-blue mr-2" x-text="r.numero"></span>
-                            <span x-text="r.description_courte"></span>
-                          </p>
-                          <p class="text-xs text-gray-500 mt-0.5">
-                            <span x-text="r.chantierCode"></span>
-                            <span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span>
-                            <span x-show="r.echeance"> · 📅 <span x-text="formatDate(r.echeance)"></span></span>
-                          </p>
-                        </div>
-                        <span class="text-xs px-2 py-1 rounded-full font-medium bg-orange-100 text-orange-800 flex-shrink-0" x-text="'+' + joursRetard(r) + 'j'"></span>
-                      </button>
-                    </li>
+                    <button @click="goToReserve(r)" class="w-full text-left p-3 hover:bg-orange-50 flex items-center gap-2">
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">
+                          <span class="font-mono text-[10px] bg-gray-100 text-gray-600 px-1 py-0.5 rounded mr-1" x-text="r.numero"></span>
+                          <span x-text="r.description_courte"></span>
+                        </p>
+                        <p class="text-[11px] text-gray-500 mt-0.5 truncate">
+                          <span x-text="r.chantierCode"></span><span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span><span x-show="r.echeance"> · 📅 <span x-text="formatDate(r.echeance)"></span></span>
+                        </p>
+                      </div>
+                      <span class="text-[10px] font-bold bg-orange-100 text-orange-800 px-2 py-1 rounded-full flex-shrink-0" x-text="'+' + joursRetard(r) + 'j'"></span>
+                    </button>
                   </template>
-                </ul>
+                </div>
               </div>
             </section>
 
-            <!-- Section : Échéances proches (30 jours) -->
-            <section class="mb-6" x-show="dashEcheances.length > 0">
-              <h2 class="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                📅 Échéances proches (30 jours)
-                <span class="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full" x-text="dashEcheances.length"></span>
-              </h2>
-              <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-                <ul class="divide-y divide-gray-100">
+            <!-- Section : Échéances proches — en-tête neutre -->
+            <section class="mb-4" x-show="dashEcheances.length > 0">
+              <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-gray-50 px-4 py-2.5 flex items-center justify-between border-b border-gray-100">
+                  <h2 class="text-sm font-bold text-gray-700 flex items-center gap-2">📅 Échéances proches (30 jours)</h2>
+                  <span class="text-[10px] font-bold bg-gray-600 text-white px-2 py-0.5 rounded-full" x-text="dashEcheances.length"></span>
+                </div>
+                <div class="divide-y divide-gray-100">
                   <template x-for="r in dashEcheances" :key="r.id">
-                    <li>
-                      <button @click="goToReserve(r)" class="w-full text-left p-4 hover:bg-gray-50 flex items-center gap-3">
-                        <div class="flex-1 min-w-0">
-                          <p class="font-medium">
-                            <span class="text-phenix-blue mr-2" x-text="r.numero"></span>
-                            <span x-text="r.description_courte"></span>
-                          </p>
-                          <p class="text-xs text-gray-500 mt-0.5">
-                            <span x-text="r.chantierCode"></span>
-                            <span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span>
-                          </p>
-                        </div>
-                        <span class="text-xs px-2 py-1 rounded-full font-medium bg-gray-100 text-gray-700 flex-shrink-0" x-text="formatDate(r.echeance)"></span>
-                      </button>
-                    </li>
+                    <button @click="goToReserve(r)" class="w-full text-left p-3 hover:bg-gray-50 flex items-center gap-2">
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">
+                          <span class="font-mono text-[10px] bg-gray-100 text-gray-600 px-1 py-0.5 rounded mr-1" x-text="r.numero"></span>
+                          <span x-text="r.description_courte"></span>
+                        </p>
+                        <p class="text-[11px] text-gray-500 mt-0.5 truncate">
+                          <span x-text="r.chantierCode"></span><span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span>
+                        </p>
+                      </div>
+                      <span class="text-[10px] font-bold bg-gray-100 text-gray-700 px-2 py-1 rounded-full flex-shrink-0" x-text="formatDate(r.echeance)"></span>
+                    </button>
                   </template>
-                </ul>
+                </div>
               </div>
             </section>
 
-            <!-- Section : Visites récentes + Chantiers actifs (en grid) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Section : Visites récentes + Chantiers actifs (en grid sur tablette+) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
               <!-- Visites récentes -->
               <section x-show="dashVisitesRecentes.length > 0">
-                <h2 class="text-lg font-bold text-gray-900 mb-3">📋 Visites récentes</h2>
-                <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-                  <ul class="divide-y divide-gray-100">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                  <div class="bg-gray-50 px-4 py-2.5 flex items-center justify-between border-b border-gray-100">
+                    <h2 class="text-sm font-bold text-gray-700 flex items-center gap-2">📋 Visites récentes</h2>
+                  </div>
+                  <div class="divide-y divide-gray-100">
                     <template x-for="v in dashVisitesRecentes" :key="v.id">
-                      <li>
-                        <button @click="openVisiteFromDashboard(v)" class="w-full text-left p-3 hover:bg-gray-50">
-                          <p class="font-medium text-sm">
+                      <button @click="openVisiteFromDashboard(v)" class="w-full text-left p-3 hover:bg-gray-50 flex items-center gap-2">
+                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide text-white flex-shrink-0"
+                              :class="(v.type_visite || 'VC') === 'VT' ? 'bg-orange-500' : 'bg-blue-600'"
+                              x-text="(v.type_visite || 'VC') === 'VT' ? 'VT' : 'VC'"></span>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium text-gray-900 truncate">
                             <span x-text="v.numero_vc"></span> — <span x-text="v.chantierCode"></span>
                           </p>
-                          <p class="text-xs text-gray-500 mt-0.5">
-                            <span x-text="formatDateLong(v.date_visite)"></span>
-                            <span class="ml-2 text-xs px-2 py-0.5 rounded-full"
+                          <p class="text-[11px] text-gray-500" x-text="formatDateLong(v.date_visite)"></p>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-full flex-shrink-0"
                               :class="v.statut === 'Diffusée' ? 'bg-green-100 text-green-800' : v.statut === 'Validée' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'"
                               x-text="v.statut"></span>
-                          </p>
-                        </button>
-                      </li>
+                      </button>
                     </template>
-                  </ul>
+                  </div>
                 </div>
               </section>
 
               <!-- Chantiers actifs -->
               <section>
-                <div class="flex items-center justify-between mb-3">
-                  <h2 class="text-lg font-bold text-gray-900">🏗️ Chantiers actifs</h2>
-                  <button @click="goHome()" class="text-xs text-phenix-blue hover:text-phenix-blue-dark font-medium">
-                    Voir tous →
-                  </button>
-                </div>
-                <div class="space-y-2">
-                  <template x-if="dashChantiersActifs.length === 0">
-                    <p class="text-sm text-gray-500 italic">Aucun chantier actif. Créez-en un dans la section Chantiers.</p>
-                  </template>
-                  <template x-for="c in dashChantiersActifs.slice(0, 5)" :key="c.id">
-                    <button @click="openChantier(c)" class="w-full text-left bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border-l-4 border-phenix-yellow p-3 flex items-start justify-between gap-3">
-                      <div class="flex-1 min-w-0">
-                        <p class="font-bold text-phenix-blue" x-text="c.code"></p>
-                        <p class="text-sm text-gray-700 truncate" x-text="c.nom"></p>
-                        <p x-show="c.cp && c.ville" class="text-xs text-gray-500 mt-0.5">
-                          <span x-text="c.cp"></span> <span x-text="c.ville"></span>
-                        </p>
-                      </div>
-                      <span x-show="c.puissance_kwc" class="text-xs text-phenix-blue font-bold flex-shrink-0">
-                        ⚡ <span x-text="c.puissance_kwc"></span> kWc
-                      </span>
-                    </button>
-                  </template>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                  <div class="bg-gray-50 px-4 py-2.5 flex items-center justify-between border-b border-gray-100">
+                    <h2 class="text-sm font-bold text-gray-700 flex items-center gap-2">🏗️ Chantiers actifs</h2>
+                    <button @click="goHome()" class="text-[11px] font-medium text-phenix-blue hover:text-phenix-blue-dark">Voir tout →</button>
+                  </div>
+                  <div class="divide-y divide-gray-100">
+                    <template x-if="dashChantiersActifs.length === 0">
+                      <p class="p-4 text-sm text-gray-500 italic">Aucun chantier actif. Créez-en un dans la section Chantiers.</p>
+                    </template>
+                    <template x-for="c in dashChantiersActifs.slice(0, 5)" :key="c.id">
+                      <button @click="openChantier(c)" class="w-full text-left p-3 hover:bg-gray-50 flex items-center gap-2">
+                        <div class="flex-1 min-w-0">
+                          <div class="flex items-center gap-2 mb-0.5">
+                            <span class="font-mono text-[10px] bg-gray-100 text-gray-600 px-1 py-0.5 rounded" x-text="c.code"></span>
+                          </div>
+                          <p class="text-sm font-medium text-gray-900 truncate" x-text="c.nom"></p>
+                          <p x-show="c.cp && c.ville" class="text-[11px] text-gray-500 truncate">
+                            <span x-text="c.cp"></span> <span x-text="c.ville"></span>
+                          </p>
+                        </div>
+                        <span x-show="c.puissance_kwc" class="text-[11px] font-bold text-phenix-blue flex-shrink-0 flex items-center gap-0.5">
+                          ⚡<span x-text="c.puissance_kwc"></span> kWc
+                        </span>
+                      </button>
+                    </template>
+                  </div>
                 </div>
               </section>
             </div>
 
             <!-- Empty state -->
             <template x-if="dashChantiersActifs.length === 0 && dashEscalades.length === 0 && dashRetards.length === 0 && dashEcheances.length === 0">
-              <div class="bg-blue-50 border border-blue-200 rounded-lg p-8 text-center mt-8">
+              <div class="bg-blue-50 border border-blue-200 rounded-xl p-8 text-center mt-4">
                 <p class="text-3xl mb-2">👋</p>
                 <p class="font-medium text-blue-900">Bienvenue sur votre tableau de bord</p>
                 <p class="text-sm text-blue-700 mt-1">
@@ -457,6 +473,7 @@
                 </p>
               </div>
             </template>
+            </div><!-- /px-4 py-4 wrapper -->
           </main>
         </template>
 
