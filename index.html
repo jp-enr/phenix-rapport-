@@ -150,7 +150,7 @@
             </button>
           </form>
 
-          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v2.7</p>
+          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v2.8</p>
         </div>
       </div>
     </template>
@@ -160,8 +160,8 @@
       <div>
         <!-- Header -->
         <!-- Sur mobile : version simplifiée (logo + déconnexion).
-             Sur desktop (sm+) : nav complète comme avant. -->
-        <header class="bg-phenix-blue text-white shadow-md sticky top-0 z-50">
+             Sur md+ : MASQUÉ car la sidebar GMAO le remplace (logo dans sidebar, déconnexion dans footer sidebar). -->
+        <header class="md:hidden bg-phenix-blue text-white shadow-md sticky top-0 z-50">
           <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <button @click="goDashboard()" class="flex items-center gap-3">
               <div class="bg-white rounded px-2 py-1 flex items-center justify-center" style="height: 36px;">
@@ -230,8 +230,8 @@
         <!-- ===== LAYOUT 2 PANNEAUX (iPad portrait + Desktop) =====
              Sur < 768px (mobile) : flex se désactive, sidebar masquée, main full width
              Sur ≥ 768px (md+, iPad portrait + desktop) : sidebar à gauche + main à droite
-             La sidebar liste les chantiers (rapide accès, contexte permanent). -->
-        <div class="md:flex md:items-stretch md:h-[calc(100vh-64px)] md:overflow-hidden">
+             Le header est masqué sur md+ (sidebar le remplace) → on prend toute la hauteur. -->
+        <div class="md:flex md:items-stretch md:h-screen md:overflow-hidden">
 
           <!-- ===== SIDEBAR NAV STYLE GMAO (md+ uniquement, mobile drawer plus bas) ===== -->
           <aside id="main-sidebar" class="hidden md:flex md:flex-col md:w-60 lg:w-72 md:flex-shrink-0 bg-white border-r border-gray-200">
@@ -405,145 +405,169 @@
                 </div>
               </template>
 
-            <!-- Section : Réserves urgentes (escalades) — en-tête rouge -->
-            <section class="mb-4" x-show="dashEscalades.length > 0">
-              <div class="bg-white rounded-xl shadow-sm border-2 border-red-100 overflow-hidden">
-                <div class="bg-red-50 px-4 py-2.5 flex items-center justify-between border-b border-red-100">
-                  <h2 class="text-sm font-bold text-red-700 flex items-center gap-2">🚨 Urgent — Escalades</h2>
-                  <span class="text-[10px] font-bold bg-red-600 text-white px-2 py-0.5 rounded-full" x-text="dashEscalades.length"></span>
-                </div>
-                <div class="divide-y divide-gray-100">
-                  <template x-for="r in dashEscalades" :key="r.id">
-                    <button @click="goToReserve(r)" class="w-full text-left p-3 hover:bg-red-50 flex items-center gap-2">
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 truncate">
-                          <span class="font-mono text-[10px] bg-gray-100 text-gray-600 px-1 py-0.5 rounded mr-1" x-text="r.numero"></span>
-                          <span x-text="r.description_courte"></span>
-                        </p>
-                        <p class="text-[11px] text-gray-500 mt-0.5 truncate">
-                          <span x-text="r.chantierCode"></span><span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span><span x-show="r.echeance"> · 📅 <span x-text="formatDate(r.echeance)"></span></span>
-                        </p>
-                      </div>
-                      <span class="text-[10px] font-bold bg-red-100 text-red-800 px-2 py-1 rounded-full flex-shrink-0">
-                        🔔 <span x-text="r.nb_rappels"></span>
-                      </span>
-                    </button>
-                  </template>
-                </div>
-              </div>
-            </section>
+            <!-- ===== Layout 2 colonnes sur lg+ : Main (visites/chantiers) | Actions (escalades/retards) =====
+                 - Sur mobile/tablette : tout empilé verticalement (Actions en premier pour la priorité)
+                 - Sur lg+ : Main à gauche (flex-1), Actions à droite (w-80)
+                 - lg:order inverse l'ordre visuel sur desktop (actions à droite mais affichage prioritaire mobile) -->
+            <div class="flex flex-col lg:flex-row lg:gap-4 lg:items-start">
 
-            <!-- Section : Réserves en retard — en-tête orange -->
-            <section class="mb-4" x-show="dashRetards.length > 0">
-              <div class="bg-white rounded-xl shadow-sm border border-orange-200 overflow-hidden">
-                <div class="bg-orange-50 px-4 py-2.5 flex items-center justify-between border-b border-orange-100">
-                  <h2 class="text-sm font-bold text-orange-700 flex items-center gap-2">⏰ Réserves en retard</h2>
-                  <span class="text-[10px] font-bold bg-orange-600 text-white px-2 py-0.5 rounded-full" x-text="dashRetards.length"></span>
-                </div>
-                <div class="divide-y divide-gray-100">
-                  <template x-for="r in dashRetards" :key="r.id">
-                    <button @click="goToReserve(r)" class="w-full text-left p-3 hover:bg-orange-50 flex items-center gap-2">
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 truncate">
-                          <span class="font-mono text-[10px] bg-gray-100 text-gray-600 px-1 py-0.5 rounded mr-1" x-text="r.numero"></span>
-                          <span x-text="r.description_courte"></span>
-                        </p>
-                        <p class="text-[11px] text-gray-500 mt-0.5 truncate">
-                          <span x-text="r.chantierCode"></span><span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span><span x-show="r.echeance"> · 📅 <span x-text="formatDate(r.echeance)"></span></span>
-                        </p>
-                      </div>
-                      <span class="text-[10px] font-bold bg-orange-100 text-orange-800 px-2 py-1 rounded-full flex-shrink-0" x-text="'+' + joursRetard(r) + 'j'"></span>
-                    </button>
-                  </template>
-                </div>
-              </div>
-            </section>
+              <!-- ===== COLONNE ACTIONS À TRAITER (droite sur lg+, top sur mobile) ===== -->
+              <aside class="space-y-4 mb-4 lg:mb-0 lg:order-2 lg:w-80 xl:w-96 lg:flex-shrink-0">
+                <!-- Encadré principal "À traiter en priorité" -->
+                <template x-if="dashEscalades.length > 0 || dashRetards.length > 0 || dashEcheances.length > 0">
+                  <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <!-- En-tête global -->
+                    <div class="bg-gradient-to-r from-red-50 to-orange-50 px-4 py-2.5 border-b border-gray-100">
+                      <h2 class="text-sm font-bold text-gray-800 flex items-center gap-2">🎯 À traiter en priorité</h2>
+                    </div>
 
-            <!-- Section : Échéances proches — en-tête neutre -->
-            <section class="mb-4" x-show="dashEcheances.length > 0">
-              <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="bg-gray-50 px-4 py-2.5 flex items-center justify-between border-b border-gray-100">
-                  <h2 class="text-sm font-bold text-gray-700 flex items-center gap-2">📅 Échéances proches (30 jours)</h2>
-                  <span class="text-[10px] font-bold bg-gray-600 text-white px-2 py-0.5 rounded-full" x-text="dashEcheances.length"></span>
-                </div>
-                <div class="divide-y divide-gray-100">
-                  <template x-for="r in dashEcheances" :key="r.id">
-                    <button @click="goToReserve(r)" class="w-full text-left p-3 hover:bg-gray-50 flex items-center gap-2">
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 truncate">
-                          <span class="font-mono text-[10px] bg-gray-100 text-gray-600 px-1 py-0.5 rounded mr-1" x-text="r.numero"></span>
-                          <span x-text="r.description_courte"></span>
-                        </p>
-                        <p class="text-[11px] text-gray-500 mt-0.5 truncate">
-                          <span x-text="r.chantierCode"></span><span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span>
-                        </p>
-                      </div>
-                      <span class="text-[10px] font-bold bg-gray-100 text-gray-700 px-2 py-1 rounded-full flex-shrink-0" x-text="formatDate(r.echeance)"></span>
-                    </button>
-                  </template>
-                </div>
-              </div>
-            </section>
-
-            <!-- Section : Visites récentes + Chantiers actifs (en grid sur tablette+) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-              <!-- Visites récentes -->
-              <section x-show="dashVisitesRecentes.length > 0">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                  <div class="bg-gray-50 px-4 py-2.5 flex items-center justify-between border-b border-gray-100">
-                    <h2 class="text-sm font-bold text-gray-700 flex items-center gap-2">📋 Visites récentes</h2>
-                  </div>
-                  <div class="divide-y divide-gray-100">
-                    <template x-for="v in dashVisitesRecentes" :key="v.id">
-                      <button @click="openVisiteFromDashboard(v)" class="w-full text-left p-3 hover:bg-gray-50 flex items-center gap-2">
-                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide text-white flex-shrink-0"
-                              :class="(v.type_visite || 'VC') === 'VT' ? 'bg-orange-500' : 'bg-blue-600'"
-                              x-text="(v.type_visite || 'VC') === 'VT' ? 'VT' : 'VC'"></span>
-                        <div class="flex-1 min-w-0">
-                          <p class="text-sm font-medium text-gray-900 truncate">
-                            <span x-text="v.numero_vc"></span> — <span x-text="v.chantierCode"></span>
-                          </p>
-                          <p class="text-[11px] text-gray-500" x-text="formatDateLong(v.date_visite)"></p>
+                    <!-- Escalades -->
+                    <template x-if="dashEscalades.length > 0">
+                      <div>
+                        <div class="px-4 py-2 bg-red-50/50 border-b border-red-100 flex items-center justify-between">
+                          <span class="text-[11px] font-bold text-red-700 uppercase tracking-wide">🚨 Escalades</span>
+                          <span class="text-[10px] font-bold bg-red-600 text-white px-2 py-0.5 rounded-full" x-text="dashEscalades.length"></span>
                         </div>
-                        <span class="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-full flex-shrink-0"
-                              :class="v.statut === 'Diffusée' ? 'bg-green-100 text-green-800' : v.statut === 'Validée' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'"
-                              x-text="v.statut"></span>
-                      </button>
+                        <div class="divide-y divide-gray-100">
+                          <template x-for="r in dashEscalades" :key="'esc-' + r.id">
+                            <button @click="goToReserve(r)" class="w-full text-left p-3 hover:bg-red-50">
+                              <div class="flex items-center gap-2 mb-0.5">
+                                <span class="font-mono text-[9px] bg-gray-100 text-gray-600 px-1 py-0.5 rounded" x-text="r.numero"></span>
+                                <span class="ml-auto text-[10px] font-bold text-red-700">🔔 <span x-text="r.nb_rappels"></span></span>
+                              </div>
+                              <p class="text-xs text-gray-900 font-medium truncate" x-text="r.description_courte"></p>
+                              <p class="text-[10px] text-gray-500 mt-0.5 truncate">
+                                <span x-text="r.chantierCode"></span><span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span>
+                              </p>
+                            </button>
+                          </template>
+                        </div>
+                      </div>
                     </template>
-                  </div>
-                </div>
-              </section>
 
-              <!-- Chantiers actifs -->
-              <section>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                  <div class="bg-gray-50 px-4 py-2.5 flex items-center justify-between border-b border-gray-100">
-                    <h2 class="text-sm font-bold text-gray-700 flex items-center gap-2">🏗️ Chantiers actifs</h2>
-                    <button @click="goHome()" class="text-[11px] font-medium text-phenix-blue hover:text-phenix-blue-dark">Voir tout →</button>
-                  </div>
-                  <div class="divide-y divide-gray-100">
-                    <template x-if="dashChantiersActifs.length === 0">
-                      <p class="p-4 text-sm text-gray-500 italic">Aucun chantier actif. Créez-en un dans la section Chantiers.</p>
+                    <!-- Retards -->
+                    <template x-if="dashRetards.length > 0">
+                      <div>
+                        <div class="px-4 py-2 bg-orange-50/50 border-b border-orange-100 flex items-center justify-between">
+                          <span class="text-[11px] font-bold text-orange-700 uppercase tracking-wide">⏰ En retard</span>
+                          <span class="text-[10px] font-bold bg-orange-600 text-white px-2 py-0.5 rounded-full" x-text="dashRetards.length"></span>
+                        </div>
+                        <div class="divide-y divide-gray-100">
+                          <template x-for="r in dashRetards" :key="'ret-' + r.id">
+                            <button @click="goToReserve(r)" class="w-full text-left p-3 hover:bg-orange-50">
+                              <div class="flex items-center gap-2 mb-0.5">
+                                <span class="font-mono text-[9px] bg-gray-100 text-gray-600 px-1 py-0.5 rounded" x-text="r.numero"></span>
+                                <span class="ml-auto text-[10px] font-bold text-orange-700" x-text="'+' + joursRetard(r) + 'j'"></span>
+                              </div>
+                              <p class="text-xs text-gray-900 font-medium truncate" x-text="r.description_courte"></p>
+                              <p class="text-[10px] text-gray-500 mt-0.5 truncate">
+                                <span x-text="r.chantierCode"></span><span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span>
+                              </p>
+                            </button>
+                          </template>
+                        </div>
+                      </div>
                     </template>
-                    <template x-for="c in dashChantiersActifs.slice(0, 5)" :key="c.id">
-                      <button @click="openChantier(c)" class="w-full text-left p-3 hover:bg-gray-50 flex items-center gap-2">
-                        <div class="flex-1 min-w-0">
-                          <div class="flex items-center gap-2 mb-0.5">
-                            <span class="font-mono text-[10px] bg-gray-100 text-gray-600 px-1 py-0.5 rounded" x-text="c.code"></span>
+
+                    <!-- Échéances proches -->
+                    <template x-if="dashEcheances.length > 0">
+                      <div>
+                        <div class="px-4 py-2 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+                          <span class="text-[11px] font-bold text-gray-700 uppercase tracking-wide">📅 Échéances proches</span>
+                          <span class="text-[10px] font-bold bg-gray-600 text-white px-2 py-0.5 rounded-full" x-text="dashEcheances.length"></span>
+                        </div>
+                        <div class="divide-y divide-gray-100">
+                          <template x-for="r in dashEcheances" :key="'ech-' + r.id">
+                            <button @click="goToReserve(r)" class="w-full text-left p-3 hover:bg-gray-50">
+                              <div class="flex items-center gap-2 mb-0.5">
+                                <span class="font-mono text-[9px] bg-gray-100 text-gray-600 px-1 py-0.5 rounded" x-text="r.numero"></span>
+                                <span class="ml-auto text-[10px] font-bold text-gray-700" x-text="formatDate(r.echeance)"></span>
+                              </div>
+                              <p class="text-xs text-gray-900 font-medium truncate" x-text="r.description_courte"></p>
+                              <p class="text-[10px] text-gray-500 mt-0.5 truncate">
+                                <span x-text="r.chantierCode"></span><span x-show="r.responsable"> · 👤 <span x-text="r.responsable"></span></span>
+                              </p>
+                            </button>
+                          </template>
+                        </div>
+                      </div>
+                    </template>
+
+                  </div>
+                </template>
+
+                <!-- Si rien à traiter, message rassurant -->
+                <template x-if="dashEscalades.length === 0 && dashRetards.length === 0 && dashEcheances.length === 0 && dashChantiersActifs.length > 0">
+                  <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+                    <p class="text-2xl mb-1">✅</p>
+                    <p class="text-sm font-bold text-green-800">Rien à traiter en priorité</p>
+                    <p class="text-[11px] text-green-700 mt-0.5">Aucune escalade, aucun retard, aucune échéance imminente.</p>
+                  </div>
+                </template>
+              </aside>
+
+              <!-- ===== COLONNE MAIN (visites/chantiers actifs, gauche sur lg+) ===== -->
+              <div class="space-y-4 lg:flex-1 lg:order-1 lg:min-w-0">
+
+                <!-- Visites récentes -->
+                <section x-show="dashVisitesRecentes.length > 0">
+                  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-gray-50 px-4 py-2.5 flex items-center justify-between border-b border-gray-100">
+                      <h2 class="text-sm font-bold text-gray-700 flex items-center gap-2">📋 Visites récentes</h2>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                      <template x-for="v in dashVisitesRecentes" :key="v.id">
+                        <button @click="openVisiteFromDashboard(v)" class="w-full text-left p-3 hover:bg-gray-50 flex items-center gap-2">
+                          <span class="text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide text-white flex-shrink-0"
+                                :class="(v.type_visite || 'VC') === 'VT' ? 'bg-orange-500' : 'bg-blue-600'"
+                                x-text="(v.type_visite || 'VC') === 'VT' ? 'VT' : 'VC'"></span>
+                          <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-900 truncate">
+                              <span x-text="v.numero_vc"></span> — <span x-text="v.chantierCode"></span>
+                            </p>
+                            <p class="text-[11px] text-gray-500" x-text="formatDateLong(v.date_visite)"></p>
                           </div>
-                          <p class="text-sm font-medium text-gray-900 truncate" x-text="c.nom"></p>
-                          <p x-show="c.cp && c.ville" class="text-[11px] text-gray-500 truncate">
-                            <span x-text="c.cp"></span> <span x-text="c.ville"></span>
-                          </p>
-                        </div>
-                        <span x-show="c.puissance_kwc" class="text-[11px] font-bold text-phenix-blue flex-shrink-0 flex items-center gap-0.5">
-                          ⚡<span x-text="c.puissance_kwc"></span> kWc
-                        </span>
-                      </button>
-                    </template>
+                          <span class="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-full flex-shrink-0"
+                                :class="v.statut === 'Diffusée' ? 'bg-green-100 text-green-800' : v.statut === 'Validée' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'"
+                                x-text="v.statut"></span>
+                        </button>
+                      </template>
+                    </div>
                   </div>
-                </div>
-              </section>
+                </section>
+
+                <!-- Chantiers actifs -->
+                <section>
+                  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-gray-50 px-4 py-2.5 flex items-center justify-between border-b border-gray-100">
+                      <h2 class="text-sm font-bold text-gray-700 flex items-center gap-2">🏗️ Chantiers actifs</h2>
+                      <button @click="goHome()" class="text-[11px] font-medium text-phenix-blue hover:text-phenix-blue-dark">Voir tout →</button>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                      <template x-if="dashChantiersActifs.length === 0">
+                        <p class="p-4 text-sm text-gray-500 italic">Aucun chantier actif. Créez-en un dans la section Chantiers.</p>
+                      </template>
+                      <template x-for="c in dashChantiersActifs.slice(0, 8)" :key="c.id">
+                        <button @click="openChantier(c)" class="w-full text-left p-3 hover:bg-gray-50 flex items-center gap-2">
+                          <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-0.5">
+                              <span class="font-mono text-[10px] bg-gray-100 text-gray-600 px-1 py-0.5 rounded" x-text="c.code"></span>
+                            </div>
+                            <p class="text-sm font-medium text-gray-900 truncate" x-text="c.nom"></p>
+                            <p x-show="c.cp && c.ville" class="text-[11px] text-gray-500 truncate">
+                              <span x-text="c.cp"></span> <span x-text="c.ville"></span>
+                            </p>
+                          </div>
+                          <span x-show="c.puissance_kwc" class="text-[11px] font-bold text-phenix-blue flex-shrink-0 flex items-center gap-0.5">
+                            ⚡<span x-text="c.puissance_kwc"></span> kWc
+                          </span>
+                        </button>
+                      </template>
+                    </div>
+                  </div>
+                </section>
+
+              </div>
             </div>
 
             <!-- Empty state -->
