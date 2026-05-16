@@ -16,7 +16,7 @@
 //
 // Pour forcer un recache complet → incrémenter CACHE_VERSION ci-dessous.
 
-const CACHE_VERSION = "phenix-v2";
+const CACHE_VERSION = "phenix-v3";
 const APP_SHELL_CACHE = `app-shell-${CACHE_VERSION}`;
 const CDN_CACHE = `cdn-${CACHE_VERSION}`;
 const IMG_CACHE = `images-${CACHE_VERSION}`;
