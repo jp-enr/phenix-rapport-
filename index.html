@@ -153,7 +153,7 @@
             </button>
           </form>
 
-          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v2.9</p>
+          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v3.0</p>
         </div>
       </div>
     </template>
@@ -1865,55 +1865,183 @@
                     :class="planningViewMode === 'Month' ? 'bg-white shadow-sm font-bold text-phenix-blue' : 'text-gray-600'"
                     class="px-3 py-1 rounded">Mois</button>
                 </div>
+
+                <!-- Boutons +Lot / +Jalon : visibles uniquement si un chantier est choisi -->
+                <template x-if="planningChantierId">
+                  <div class="flex gap-2 ml-auto">
+                    <button @click="openPlanningTaskForm(null, 'lot')"
+                      class="bg-phenix-blue hover:bg-phenix-blue-dark text-white font-bold py-1.5 px-3 rounded-md text-xs flex items-center gap-1">
+                      <span class="text-base leading-none">+</span> Lot
+                    </button>
+                    <button @click="openPlanningTaskForm(null, 'jalon')"
+                      class="bg-phenix-yellow hover:opacity-90 text-phenix-blue-dark font-bold py-1.5 px-3 rounded-md text-xs flex items-center gap-1">
+                      🚩 Jalon
+                    </button>
+                  </div>
+                </template>
               </div>
 
               <!-- Légende -->
-              <template x-if="planningChantierId">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 px-4 py-3 mb-4 flex flex-wrap gap-x-5 gap-y-2 text-xs">
+              <template x-if="planningChantierId && planningTasks.length > 0">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 px-4 py-3 mb-4 flex flex-wrap gap-x-5 gap-y-2 text-xs items-center">
                   <span class="flex items-center gap-2">
-                    <span class="inline-block w-6 h-3 rounded" style="background:#93c5fd; border:1px solid #0D4484;"></span> Visite VC
+                    <span class="inline-block w-6 h-3 rounded" style="background:#93c5fd; border:1px solid #0D4484;"></span> Lot (période)
                   </span>
                   <span class="flex items-center gap-2">
-                    <span class="inline-block w-6 h-3 rounded" style="background:#fdba74; border:1px solid #ea580c;"></span> Visite VT
+                    <span class="inline-block w-3 h-3 rounded-full" style="background:#F2AC10; border:1px solid #c08400;"></span> Jalon (1 jour)
                   </span>
-                  <span class="flex items-center gap-2">
-                    <span class="inline-block w-6 h-3 rounded" style="background:#fde68a; border:1px dashed #d97706;"></span> Réserve ouverte
-                  </span>
+                  <span class="text-gray-500 ml-auto">💡 Cliquer une barre pour éditer · Glisser pour reprogrammer</span>
                 </div>
               </template>
 
               <!-- Gantt -->
               <template x-if="planningChantierId">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-                  <svg id="gantt-svg" style="min-height: 200px;"></svg>
+                  <template x-if="planningTasks.length > 0">
+                    <svg id="gantt-svg" style="min-height: 200px;"></svg>
+                  </template>
                   <template x-if="planningTasks.length === 0">
-                    <div class="p-8 text-center text-gray-500">
-                      <p class="text-3xl mb-2">📭</p>
-                      <p class="text-sm">Aucune visite ni réserve sur ce chantier.</p>
+                    <div class="p-10 text-center text-gray-500">
+                      <p class="text-4xl mb-3">📋</p>
+                      <p class="text-sm font-medium">Aucun lot ni jalon défini pour ce chantier.</p>
+                      <p class="text-xs text-gray-400 mt-2">Clique sur « + Lot » pour créer une période ou « 🚩 Jalon » pour un point unique sur la frise.</p>
                     </div>
                   </template>
                 </div>
               </template>
 
-              <!-- Empty state -->
+              <!-- Empty state : aucun chantier sélectionné -->
               <template x-if="!planningChantierId">
                 <div class="bg-amber-50 border border-amber-200 rounded-xl p-8 text-center">
                   <p class="text-3xl mb-2">👆</p>
                   <p class="text-sm font-bold text-amber-900">Sélectionne un chantier pour voir son planning</p>
-                  <p class="text-xs text-amber-700 mt-1">Le Gantt affichera ses visites (VC/VT) et ses réserves ouvertes avec leurs échéances.</p>
+                  <p class="text-xs text-amber-700 mt-1">Tu pourras créer des <strong>lots</strong> (périodes : étude, pose, câblage...) et des <strong>jalons</strong> (dates clés : COFRAC, mise en service...).</p>
                 </div>
               </template>
-
-              <!-- Note bêta -->
-              <p class="text-[11px] text-gray-500 italic mt-3">
-                💡 Cette vue est en bêta. Drag-and-drop visuel uniquement pour l'instant — la persistance des dates en base arrive bientôt.
-              </p>
             </div>
           </main>
         </template>
 
           </div><!-- /panneau principal -->
         </div><!-- /layout 2 panneaux -->
+
+        <!-- ===== MODALE LOT / JALON PLANNING (création/édition) ===== -->
+        <template x-if="modal === 'planning-task'">
+          <div class="fixed inset-0 bg-black/50 z-[60] flex items-start sm:items-center justify-center p-2 sm:p-4 overflow-y-auto" @click.self="closeModal()">
+            <div class="bg-white rounded-lg shadow-xl max-w-lg w-full my-4">
+              <div class="text-white px-4 py-3 rounded-t-lg flex items-center justify-between sticky top-0"
+                   :class="planningTaskForm.type === 'jalon' ? 'bg-amber-500' : 'bg-phenix-blue'">
+                <h2 class="font-bold text-lg">
+                  <span x-show="planningTaskForm.id">Modifier</span><span x-show="!planningTaskForm.id">Nouveau</span>
+                  <span x-text="planningTaskForm.type === 'jalon' ? ' jalon 🚩' : ' lot 📋'"></span>
+                </h2>
+                <button @click="closeModal()" class="text-white/80 hover:text-white text-xl leading-none">×</button>
+              </div>
+              <form @submit.prevent="savePlanningTask()" class="p-4 space-y-4">
+
+                <!-- Type : Lot ou Jalon -->
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Type</label>
+                  <div class="flex gap-2">
+                    <button type="button" @click="planningTaskForm.type = 'lot'; if (planningTaskForm.couleur === '#F2AC10') planningTaskForm.couleur = '#0D4484';"
+                      class="flex-1 px-3 py-2 rounded-md text-sm font-medium border-2 transition-colors"
+                      :class="planningTaskForm.type === 'lot' ? 'border-phenix-blue bg-blue-50 text-phenix-blue' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+                      📋 Lot (période)
+                    </button>
+                    <button type="button" @click="planningTaskForm.type = 'jalon'; planningTaskForm.couleur = '#F2AC10'; planningTaskForm.date_fin = planningTaskForm.date_debut;"
+                      class="flex-1 px-3 py-2 rounded-md text-sm font-medium border-2 transition-colors"
+                      :class="planningTaskForm.type === 'jalon' ? 'border-amber-500 bg-amber-50 text-amber-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+                      🚩 Jalon (1 jour)
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Nom -->
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Nom <span class="text-red-500">*</span></label>
+                  <input type="text" x-model="planningTaskForm.nom" required maxlength="200"
+                    :placeholder="planningTaskForm.type === 'jalon' ? 'Ex: Réception COFRAC, Mise en service...' : 'Ex: Pose des structures, Câblage...'"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-phenix-blue" />
+                </div>
+
+                <!-- Dates -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">
+                      <span x-show="planningTaskForm.type === 'jalon'">Date</span>
+                      <span x-show="planningTaskForm.type === 'lot'">Date début</span>
+                      <span class="text-red-500">*</span>
+                    </label>
+                    <input type="date" x-model="planningTaskForm.date_debut" required
+                      @change="if (planningTaskForm.type === 'jalon') planningTaskForm.date_fin = planningTaskForm.date_debut;"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-phenix-blue" />
+                  </div>
+                  <div x-show="planningTaskForm.type === 'lot'">
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Date fin <span class="text-red-500">*</span></label>
+                    <input type="date" x-model="planningTaskForm.date_fin" :required="planningTaskForm.type === 'lot'"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-phenix-blue" />
+                  </div>
+                </div>
+
+                <!-- Progression (uniquement pour les lots) -->
+                <div x-show="planningTaskForm.type === 'lot'">
+                  <label class="block text-xs font-medium text-gray-700 mb-1">
+                    Progression :
+                    <span class="font-bold text-phenix-blue"><span x-text="planningTaskForm.progression"></span>%</span>
+                  </label>
+                  <input type="range" x-model.number="planningTaskForm.progression" min="0" max="100" step="5"
+                    class="w-full" />
+                </div>
+
+                <!-- Couleur -->
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Couleur</label>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <template x-for="c in ['#0D4484','#F2AC10','#16A34A','#DC2626','#7C3AED','#6B7280']" :key="c">
+                      <button type="button" @click="planningTaskForm.couleur = c"
+                        class="w-8 h-8 rounded-md border-2 transition-transform"
+                        :style="'background-color:' + c"
+                        :class="planningTaskForm.couleur === c ? 'border-gray-900 scale-110' : 'border-gray-300'"></button>
+                    </template>
+                    <input type="color" x-model="planningTaskForm.couleur"
+                      class="w-12 h-8 cursor-pointer rounded border border-gray-300" title="Couleur personnalisée" />
+                  </div>
+                </div>
+
+                <!-- Description -->
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Description (optionnel)</label>
+                  <textarea x-model="planningTaskForm.description" rows="2" maxlength="500"
+                    placeholder="Détails sur ce lot ou jalon..."
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-phenix-blue text-sm"></textarea>
+                </div>
+
+                <template x-if="formError">
+                  <div class="bg-red-50 border border-red-200 text-red-700 text-sm p-3 rounded-md" x-text="formError"></div>
+                </template>
+
+                <!-- Actions -->
+                <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                  <!-- Bouton supprimer uniquement en édition -->
+                  <button type="button" x-show="planningTaskForm.id" @click="deletePlanningTask()"
+                    class="px-3 py-2 text-red-600 hover:text-red-700 text-sm font-medium">
+                    🗑 Supprimer
+                  </button>
+                  <div class="flex items-center gap-2 ml-auto">
+                    <button type="button" @click="closeModal()"
+                      class="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm font-medium">
+                      Annuler
+                    </button>
+                    <button type="submit" :disabled="formLoading"
+                      class="bg-phenix-blue hover:bg-phenix-blue-dark text-white font-medium py-2 px-5 rounded-md transition-colors disabled:opacity-50">
+                      <span x-text="formLoading ? 'Enregistrement...' : (planningTaskForm.id ? 'Modifier' : 'Créer')"></span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </template>
 
         <!-- ===== MODALE CHANTIER (création/édition) ===== -->
         <template x-if="modal === 'chantier'">
@@ -3496,9 +3624,22 @@
 
         // Planning (Mini-Gantt)
         planningChantierId: "",
-        planningTasks: [],
-        planningViewMode: "Week", // 'Day' | 'Week' | 'Month'
+        planningTasks: [],         // tasks formattées pour Frappe Gantt
+        planningRawTasks: [],      // données brutes de la table gantt_tasks
+        planningViewMode: "Week",  // 'Day' | 'Week' | 'Month'
         _ganttInstance: null,
+        // Formulaire de création/édition d'un lot ou jalon
+        planningTaskForm: {
+          id: null,
+          chantier_id: null,
+          nom: "",
+          type: "lot", // 'lot' ou 'jalon'
+          date_debut: "",
+          date_fin: "",
+          progression: 0,
+          couleur: "#0D4484",
+          description: "",
+        },
 
         // Filtres
         filterArchive: false,
@@ -4202,51 +4343,42 @@
         async loadPlanning() {
           if (!this.planningChantierId) {
             this.planningTasks = [];
+            this.planningRawTasks = [];
             return;
           }
-          // 1) Charger visites du chantier (VC + VT, non archivées)
-          const { data: visites } = await supabaseClient
-            .from("visites")
-            .select("id, numero_vc, type_visite, date_visite, statut")
+          // Charger les lots et jalons du chantier depuis gantt_tasks
+          const { data, error } = await supabaseClient
+            .from("gantt_tasks")
+            .select("*")
             .eq("chantier_id", this.planningChantierId)
-            .neq("type_visite", "VI")
-            .order("date_visite", { ascending: true });
-          // 2) Charger réserves ouvertes avec échéance
-          const { data: reserves } = await supabaseClient
-            .from("reserves")
-            .select("id, numero, description_courte, statut, echeance, created_at")
-            .eq("chantier_id", this.planningChantierId)
-            .eq("statut", "Ouverte")
-            .not("echeance", "is", null);
+            .order("ordre", { ascending: true })
+            .order("date_debut", { ascending: true });
 
+          if (error) {
+            // Table peut-être pas encore créée → message d'aide explicite
+            if (error.message && error.message.toLowerCase().includes("relation") && error.message.includes("does not exist")) {
+              this.showToast("⚠ La table gantt_tasks n'existe pas. Exécute migrations/05_gantt_tasks.sql dans Supabase.", "error", 6000);
+            } else {
+              this.showToast("Erreur chargement planning : " + error.message, "error");
+            }
+            this.planningTasks = [];
+            this.planningRawTasks = [];
+            return;
+          }
+
+          this.planningRawTasks = data || [];
           // Construire les tasks pour Frappe Gantt
-          const tasks = [];
-          (visites || []).forEach(v => {
-            if (!v.date_visite) return;
-            tasks.push({
-              id: "vis-" + v.id,
-              name: (v.type_visite === "VT" ? "🔧 " : "📋 ") + v.numero_vc,
-              start: v.date_visite,
-              end: v.date_visite, // visite = 1 jour
-              progress: v.statut === "Diffusée" ? 100 : v.statut === "Validée" ? 80 : 40,
-              custom_class: v.type_visite === "VT" ? "bar-vt" : "bar-vc",
-            });
-          });
-          (reserves || []).forEach(r => {
-            const startDate = (r.created_at || r.echeance).slice(0, 10);
-            tasks.push({
-              id: "res-" + r.id,
-              name: "📌 " + r.numero + " — " + (r.description_courte || "").slice(0, 40),
-              start: startDate,
-              end: r.echeance,
-              progress: 0,
-              custom_class: "bar-reserve",
-            });
-          });
+          this.planningTasks = this.planningRawTasks.map(t => ({
+            id: t.id,
+            name: (t.type === "jalon" ? "🚩 " : "") + t.nom,
+            start: t.date_debut,
+            end: t.date_fin,
+            progress: t.progression || 0,
+            custom_class: t.type === "jalon" ? "bar-jalon" : "bar-lot",
+            // On stocke la couleur custom dans une propriété qu'on relit ensuite via CSS
+            _couleur: t.couleur,
+          }));
 
-          this.planningTasks = tasks;
-
-          // Détruire l'instance Gantt précédente et recréer
           this.$nextTick(() => this._renderGantt());
         },
 
@@ -4258,25 +4390,176 @@
           try {
             this._ganttInstance = new Gantt(svg, this.planningTasks, {
               view_mode: this.planningViewMode || "Week",
-              bar_height: 22,
+              bar_height: 24,
               bar_corner_radius: 4,
               padding: 14,
               header_height: 50,
               column_width: 30,
               language: "fr",
               on_click: (task) => {
-                // TODO Étape 2 : ouvrir la visite/réserve correspondante
-                console.log("Tâche cliquée :", task.id);
+                // Cliquer une barre = ouvrir l'édition
+                const raw = this.planningRawTasks.find(t => t.id === task.id);
+                if (raw) this.openPlanningTaskForm(raw);
               },
               on_date_change: (task, start, end) => {
-                // TODO Étape 2 : persister vers Supabase
-                this.showToast("Date modifiée (persistance arrive en Étape 2)", "info");
-                console.log("Date changée :", task.id, start, end);
+                this._persistGanttDateChange(task, start, end);
+              },
+              on_progress_change: (task, progress) => {
+                this._persistGanttProgressChange(task, progress);
               },
             });
           } catch (err) {
             console.error("Erreur Frappe Gantt :", err);
           }
+        },
+
+        // ===== PLANNING : CRUD lots / jalons =====
+        // Ouvre la modale (nouveau ou édition)
+        openPlanningTaskForm(task = null, type = "lot") {
+          this.formError = "";
+          if (task) {
+            // Édition d'une tâche existante
+            this.planningTaskForm = {
+              id: task.id,
+              chantier_id: task.chantier_id,
+              nom: task.nom || "",
+              type: task.type || "lot",
+              date_debut: task.date_debut || "",
+              date_fin: task.date_fin || "",
+              progression: task.progression || 0,
+              couleur: task.couleur || "#0D4484",
+              description: task.description || "",
+            };
+          } else {
+            // Nouvelle tâche : pré-remplir avec le chantier courant et la date du jour
+            const today = new Date().toISOString().split("T")[0];
+            this.planningTaskForm = {
+              id: null,
+              chantier_id: this.planningChantierId,
+              nom: "",
+              type: type,
+              date_debut: today,
+              date_fin: today,
+              progression: 0,
+              couleur: type === "jalon" ? "#F2AC10" : "#0D4484",
+              description: "",
+            };
+          }
+          this.modal = "planning-task";
+        },
+
+        async savePlanningTask() {
+          this.formError = "";
+          const f = this.planningTaskForm;
+          if (!f.nom?.trim()) {
+            this.formError = "Le nom est obligatoire.";
+            return;
+          }
+          if (!f.date_debut) {
+            this.formError = "La date de début est obligatoire.";
+            return;
+          }
+          // Pour un jalon : date_fin = date_debut
+          let dateFin = f.date_fin;
+          if (f.type === "jalon" || !dateFin) {
+            dateFin = f.date_debut;
+          }
+          // Garde-fou : date_fin >= date_debut
+          if (dateFin < f.date_debut) {
+            this.formError = "La date de fin doit être après la date de début.";
+            return;
+          }
+
+          this.formLoading = true;
+          const payload = {
+            chantier_id: f.chantier_id || this.planningChantierId,
+            nom: f.nom.trim(),
+            type: f.type,
+            date_debut: f.date_debut,
+            date_fin: dateFin,
+            progression: parseInt(f.progression) || 0,
+            couleur: f.couleur || "#0D4484",
+            description: f.description || null,
+          };
+
+          let error;
+          if (f.id) {
+            // Mise à jour
+            const res = await supabaseClient.from("gantt_tasks").update(payload).eq("id", f.id);
+            error = res.error;
+          } else {
+            // Insert
+            const res = await supabaseClient.from("gantt_tasks").insert(payload);
+            error = res.error;
+          }
+          this.formLoading = false;
+          if (error) {
+            this.formError = "Erreur : " + error.message;
+            return;
+          }
+          this.showToast(f.id ? "Modifié ✓" : "Créé ✓", "success");
+          this.closeModal();
+          await this.loadPlanning();
+        },
+
+        async deletePlanningTask() {
+          if (!this.planningTaskForm.id) return;
+          if (!confirm("Supprimer cette " + (this.planningTaskForm.type === "jalon" ? "jalon" : "lot") + " ? Action irréversible.")) return;
+          const { error } = await supabaseClient.from("gantt_tasks").delete().eq("id", this.planningTaskForm.id);
+          if (error) {
+            this.showToast("Erreur : " + error.message, "error");
+            return;
+          }
+          this.showToast("Supprimé ✓", "success");
+          this.closeModal();
+          await this.loadPlanning();
+        },
+
+        // Persiste les changements de date (drag-and-drop sur la barre)
+        async _persistGanttDateChange(task, start, end) {
+          // start et end sont des Date JS de Frappe Gantt → on les convertit en YYYY-MM-DD
+          const toDateStr = (d) => {
+            if (typeof d === "string") return d.slice(0, 10);
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, "0");
+            const day = String(d.getDate()).padStart(2, "0");
+            return `${y}-${m}-${day}`;
+          };
+          const newStart = toDateStr(start);
+          const newEnd = toDateStr(end);
+
+          const raw = this.planningRawTasks.find(t => t.id === task.id);
+          if (!raw) return;
+
+          // Pour un jalon, on garde 1 seul jour
+          const finToSave = raw.type === "jalon" ? newStart : newEnd;
+
+          const { error } = await supabaseClient
+            .from("gantt_tasks")
+            .update({ date_debut: newStart, date_fin: finToSave })
+            .eq("id", task.id);
+          if (error) {
+            this.showToast("Erreur sauvegarde dates : " + error.message, "error");
+            return;
+          }
+          // Mettre à jour le cache local sans recharger
+          raw.date_debut = newStart;
+          raw.date_fin = finToSave;
+          this.showToast("Dates mises à jour", "success", 1500);
+        },
+
+        async _persistGanttProgressChange(task, progress) {
+          const p = Math.max(0, Math.min(100, parseInt(progress) || 0));
+          const { error } = await supabaseClient
+            .from("gantt_tasks")
+            .update({ progression: p })
+            .eq("id", task.id);
+          if (error) {
+            this.showToast("Erreur sauvegarde progression : " + error.message, "error");
+            return;
+          }
+          const raw = this.planningRawTasks.find(t => t.id === task.id);
+          if (raw) raw.progression = p;
         },
 
         setPlanningView(mode) {
