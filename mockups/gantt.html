@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mockup Mini-Gantt — Phenix Rapports</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <!-- Frappe Gantt — librairie open source de Gantt drag-and-drop -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css" />
+  <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.umd.js"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; background: #f3f4f6; }
+    .text-phenix-blue { color: #0D4484; }
+    .bg-phenix-blue { background-color: #0D4484; }
+    .bg-phenix-yellow { background-color: #F2AC10; }
+    .text-phenix-yellow { color: #F2AC10; }
+    .gradient-phenix { background: linear-gradient(135deg, #0D4484, #08305F); }
+
+    /* Personnalisation Frappe Gantt aux couleurs Phenix */
+    .gantt .bar { fill: #93c5fd; stroke: #0D4484; stroke-width: 1; }
+    .gantt .bar-progress { fill: #0D4484; }
+    .gantt .bar-vt .bar { fill: #fdba74; stroke: #ea580c; }
+    .gantt .bar-vt .bar-progress { fill: #ea580c; }
+    .gantt .bar-reserve .bar { fill: #fde68a; stroke: #d97706; stroke-dasharray: 4; }
+    .gantt .bar-reserve .bar-progress { fill: #d97706; }
+    .gantt .bar-milestone .bar { fill: #F2AC10; stroke: #c08400; }
+    .gantt .today-highlight { fill: #fee2e2; }
+
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+    .legend-box { width: 28px; height: 16px; border-radius: 4px; border: 1px solid; }
+  </style>
+</head>
+<body class="py-8 px-4">
+
+  <div class="max-w-6xl mx-auto">
+    <h1 class="text-2xl font-bold text-center text-gray-900 mb-2">Mini-Gantt drag-and-drop par chantier</h1>
+    <p class="text-center text-gray-600 mb-6">Tu peux <strong>cliquer-glisser</strong> les barres pour changer les dates</p>
+
+    <!-- LÉGENDE -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+      <p class="text-xs font-bold uppercase text-gray-500 mb-3 tracking-wider">Légende</p>
+      <div class="flex gap-6 flex-wrap">
+        <div class="legend-item">
+          <div class="legend-box" style="background:#93c5fd; border-color:#0D4484;"></div>
+          <span>Visite VC (Visite Chantier)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-box" style="background:#fdba74; border-color:#ea580c;"></div>
+          <span>Visite VT (Visite Technique)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-box" style="background:#fde68a; border-color:#d97706; border-style:dashed;"></div>
+          <span>Réserve ouverte (avec échéance)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-box" style="background:#F2AC10; border-color:#c08400;"></div>
+          <span>Jalon / Phase chantier</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HEADER chantier -->
+    <div class="gradient-phenix rounded-t-xl p-5 text-white">
+      <p class="font-mono text-xs text-blue-100">CH-2024-12</p>
+      <h2 class="text-xl font-bold mt-1">Ombrières Carrefour Lyon</h2>
+      <p class="text-blue-100 text-sm mt-2">📍 12 rue de la Centrale, 69100 Lyon · 320 kWc</p>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="bg-white border-x border-gray-200 px-5 py-3 flex items-center gap-2 flex-wrap">
+      <h3 class="text-sm font-bold text-gray-800 mr-3">📅 Planning du chantier</h3>
+      <div class="ml-auto flex gap-1 bg-gray-100 rounded-lg p-1 text-xs">
+        <button id="view-day" class="px-3 py-1 rounded">Jour</button>
+        <button id="view-week" class="px-3 py-1 rounded bg-white shadow-sm font-bold text-phenix-blue">Semaine</button>
+        <button id="view-month" class="px-3 py-1 rounded">Mois</button>
+      </div>
+      <button id="add-task" class="bg-phenix-yellow hover:opacity-90 text-phenix-blue-dark font-bold py-1.5 px-3 rounded-md text-xs">+ Tâche</button>
+    </div>
+
+    <!-- Container Gantt -->
+    <div class="bg-white border border-gray-200 rounded-b-xl shadow-sm overflow-x-auto">
+      <svg id="gantt"></svg>
+    </div>
+
+    <!-- Détails de la tâche cliquée -->
+    <div id="task-details" class="mt-4 bg-white rounded-xl shadow-sm border border-gray-200 p-4" style="display:none">
+      <h3 class="font-bold text-base mb-2">Détails de la tâche</h3>
+      <pre id="task-info" class="text-xs bg-gray-50 p-3 rounded overflow-auto"></pre>
+    </div>
+
+    <!-- Inclusion dans le PDF -->
+    <div class="mt-8 bg-amber-50 border border-amber-200 rounded-xl p-5">
+      <h3 class="font-bold text-base text-amber-900 mb-2">📄 Inclusion dans le CR PDF</h3>
+      <p class="text-sm text-amber-800 mb-3">
+        Le Gantt peut être <strong>capturé sous forme d'image PNG</strong> et inséré automatiquement dans le PDF du CR de chantier. Voici à quoi ça ressemblerait :
+      </p>
+      <div class="bg-white rounded-lg p-3 border border-amber-200 text-center">
+        <p class="text-xs text-gray-500 uppercase tracking-wider mb-2">Aperçu PDF — page Planning</p>
+        <div class="border-2 border-gray-300 inline-block p-4 bg-gray-50">
+          <p class="text-xs font-bold text-gray-700 mb-2">Planning du chantier — généré le 16 mai 2026</p>
+          <div id="pdf-preview" style="width: 500px; height: 200px; background: white; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; color: #999; font-size: 11px;">
+            [Capture PNG du Gantt ici, généré automatiquement]
+          </div>
+        </div>
+      </div>
+      <button id="capture-png" class="mt-3 bg-phenix-blue text-white text-sm font-bold px-4 py-2 rounded-md">📸 Capturer le Gantt pour le PDF</button>
+    </div>
+
+    <!-- Choix de modèle de données -->
+    <div class="mt-8 bg-white rounded-xl shadow-md p-6">
+      <h2 class="text-lg font-bold text-gray-900 mb-3">⚙️ Comment alimenter le Gantt ?</h2>
+      <p class="text-sm text-gray-700 mb-4">Trois approches possibles :</p>
+
+      <div class="space-y-3">
+        <div class="border-2 border-blue-200 bg-blue-50 rounded-lg p-3">
+          <p class="font-bold text-blue-900 text-sm">🅰️ Auto depuis Visites + Réserves (Recommandé)</p>
+          <p class="text-xs text-blue-800 mt-1">
+            Les tâches du Gantt sont <strong>générées automatiquement</strong> depuis tes données existantes :
+            visites = marqueurs 1 jour, réserves ouvertes = barres de la création à l'échéance.
+            <strong>Aucune saisie supplémentaire.</strong>
+            Drag-and-drop pour reprogrammer une visite ou changer l'échéance d'une réserve.
+          </p>
+        </div>
+
+        <div class="border border-gray-200 rounded-lg p-3">
+          <p class="font-bold text-gray-900 text-sm">🅱️ Tâches personnalisées (nouvelle table)</p>
+          <p class="text-xs text-gray-600 mt-1">
+            Ajout d'une nouvelle table <code>gantt_tasks</code> où tu crées librement des phases / jalons
+            (ex: « Étude », « Approvisionnement », « Installation », « Mise en service »).
+            Pas lié aux visites/réserves.
+          </p>
+        </div>
+
+        <div class="border border-gray-200 rounded-lg p-3">
+          <p class="font-bold text-gray-900 text-sm">🅲 Mix : Visites/Réserves auto + tâches custom</p>
+          <p class="text-xs text-gray-600 mt-1">
+            Le meilleur des deux mondes mais le plus de code à écrire. À voir dans une 2ᵉ itération.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ===== Données de démonstration =====
+    var tasks = [
+      // Phase générale (jalon)
+      { id: 'phase-prep', name: '📐 Étude & préparation', start: '2026-05-01', end: '2026-05-15', progress: 100, custom_class: 'bar-milestone' },
+      { id: 'phase-pose', name: '🏗 Pose des structures', start: '2026-05-10', end: '2026-06-20', progress: 60, custom_class: 'bar-milestone' },
+      { id: 'phase-cablage', name: '⚡ Câblage électrique', start: '2026-06-15', end: '2026-07-05', progress: 10, custom_class: 'bar-milestone' },
+
+      // Visites VC (Visites de Chantier)
+      { id: 'vc-10', name: 'VC-10 (visite chantier)', start: '2026-04-29', end: '2026-04-29', progress: 100, custom_class: 'bar-vc' },
+      { id: 'vc-11', name: 'VC-11 (visite chantier)', start: '2026-05-06', end: '2026-05-06', progress: 100, custom_class: 'bar-vc' },
+      { id: 'vc-12', name: 'VC-12 (visite chantier)', start: '2026-05-15', end: '2026-05-15', progress: 50, custom_class: 'bar-vc' },
+      { id: 'vc-13', name: 'VC-13 (visite chantier)', start: '2026-05-29', end: '2026-05-29', progress: 0, custom_class: 'bar-vc' },
+
+      // Visites VT (Visites Techniques)
+      { id: 'vt-08', name: 'VT-08 (4M MEREU BTP)', start: '2026-05-13', end: '2026-05-13', progress: 100, custom_class: 'bar-vt' },
+      { id: 'vt-09', name: 'VT-09 (Granger Fondations)', start: '2026-05-22', end: '2026-05-22', progress: 0, custom_class: 'bar-vt' },
+
+      // Réserves ouvertes (barres avec échéance)
+      { id: 'r-001', name: 'R-VT-001 Implantation poteaux', start: '2026-05-13', end: '2026-05-18', progress: 30, custom_class: 'bar-reserve' },
+      { id: 'r-002', name: 'R-VT-002 Tailles des haies', start: '2026-05-13', end: '2026-06-01', progress: 0, custom_class: 'bar-reserve' },
+      { id: 'r-003', name: 'R-VC-008 Garde-corps', start: '2026-05-15', end: '2026-05-22', progress: 50, custom_class: 'bar-reserve' },
+    ];
+
+    var gantt = new Gantt("#gantt", tasks, {
+      view_mode: 'Week',
+      bar_height: 24,
+      bar_corner_radius: 4,
+      arrow_curve: 5,
+      padding: 12,
+      header_height: 50,
+      column_width: 30,
+      step: 24,
+      language: 'fr',
+      on_click: function (task) {
+        document.getElementById('task-details').style.display = 'block';
+        document.getElementById('task-info').textContent = JSON.stringify({
+          id: task.id,
+          name: task.name,
+          start: task.start,
+          end: task.end,
+          progress: task.progress
+        }, null, 2);
+      },
+      on_date_change: function (task, start, end) {
+        // ← Ici on appellera Supabase pour persister le nouveau planning
+        console.log('Date changée pour', task.id, ':', start, '→', end);
+        document.getElementById('task-details').style.display = 'block';
+        document.getElementById('task-info').textContent = 'Date changée pour ' + task.name + '\\n' +
+          'Nouveau début : ' + new Date(start).toLocaleDateString('fr-FR') + '\\n' +
+          'Nouvelle fin  : ' + new Date(end).toLocaleDateString('fr-FR');
+      },
+      on_progress_change: function (task, progress) {
+        console.log('Progression changée:', task.id, progress);
+      }
+    });
+
+    // Boutons de bascule de vue
+    document.getElementById('view-day').onclick = function () {
+      gantt.change_view_mode('Day');
+      document.querySelectorAll('#view-day,#view-week,#view-month').forEach(b => b.className = 'px-3 py-1 rounded');
+      this.className = 'px-3 py-1 rounded bg-white shadow-sm font-bold text-phenix-blue';
+    };
+    document.getElementById('view-week').onclick = function () {
+      gantt.change_view_mode('Week');
+      document.querySelectorAll('#view-day,#view-week,#view-month').forEach(b => b.className = 'px-3 py-1 rounded');
+      this.className = 'px-3 py-1 rounded bg-white shadow-sm font-bold text-phenix-blue';
+    };
+    document.getElementById('view-month').onclick = function () {
+      gantt.change_view_mode('Month');
+      document.querySelectorAll('#view-day,#view-week,#view-month').forEach(b => b.className = 'px-3 py-1 rounded');
+      this.className = 'px-3 py-1 rounded bg-white shadow-sm font-bold text-phenix-blue';
+    };
+
+    // Bouton capture PNG
+    document.getElementById('capture-png').onclick = function () {
+      var svg = document.querySelector('#gantt');
+      var serializer = new XMLSerializer();
+      var svgStr = serializer.serializeToString(svg);
+      // Affichage simple : le SVG est capturable, à intégrer dans le PDF avec jsPDF + svg2pdf ou via canvas → PNG
+      alert('Le Gantt sera capturé en PNG et inséré dans le PDF.\\nCode de capture : OK techniquement réalisable (svg → canvas → PNG → jsPDF.addImage()).');
+    };
+  </script>
+</body>
+</html>
