@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mockup Tableau de bord — Phenix Rapports</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; background: #f3f4f6; }
+    .text-phenix-blue { color: #0D4484; }
+    .text-phenix-blue-dark { color: #08305F; }
+    .bg-phenix-blue { background-color: #0D4484; }
+    .bg-phenix-yellow { background-color: #F2AC10; }
+    .text-phenix-yellow { color: #F2AC10; }
+    .gradient-phenix { background: linear-gradient(135deg, #0D4484, #08305F); }
+    .col-label {
+      font-weight: 700; text-align: center; margin-bottom: 12px; padding: 6px 12px;
+      border-radius: 6px; display: inline-block;
+    }
+    .label-current { background: #fee2e2; color: #991b1b; }
+    .label-proposed { background: #dcfce7; color: #166534; }
+    .phone-frame {
+      width: 100%; max-width: 380px; margin: 0 auto;
+      border: 12px solid #1f2937; border-radius: 36px; overflow: hidden;
+      background: #f9fafb; box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+      max-height: 760px; height: 760px;
+    }
+    .phone-screen {
+      width: 100%; height: 100%; overflow-y: auto; position: relative;
+    }
+  </style>
+</head>
+<body class="py-8 px-4">
+
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-2xl font-bold text-center text-gray-900 mb-2">Tableau de bord redesigné</h1>
+    <p class="text-center text-gray-600 mb-10">Inspiré de la charte phenix-centrales-s4e (bandeau dégradé + KPI cards)</p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-5xl mx-auto">
+
+      <!-- ============ AVANT ============ -->
+      <div>
+        <div class="text-center mb-4">
+          <span class="col-label label-current">AVANT</span>
+        </div>
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <!-- Header bleu basique (header app actuelle) -->
+            <div class="bg-phenix-blue text-white px-4 py-3 flex items-center justify-between sticky top-0 z-10 shadow-md">
+              <div class="flex items-center gap-2">
+                <div class="bg-white rounded px-2 py-0.5">
+                  <span class="text-phenix-blue font-bold text-xs">PS</span>
+                </div>
+                <span class="text-phenix-yellow text-xs font-semibold">Phenix Rapports</span>
+              </div>
+              <button class="text-white/80 text-xl leading-none">↪</button>
+            </div>
+
+            <!-- Page content -->
+            <div class="p-4 pb-20">
+              <h1 class="text-2xl font-bold text-gray-900 mb-1">Tableau de bord</h1>
+              <p class="text-gray-600 text-xs mb-4">Vue d'ensemble de vos chantiers</p>
+
+              <input type="text" placeholder="🔍 Rechercher un chantier..." class="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm mb-4 shadow-sm" />
+
+              <!-- KPIs en grille 2x2, basiques -->
+              <div class="grid grid-cols-2 gap-3 mb-6">
+                <div class="bg-white rounded-lg shadow-sm p-3 border-l-4 border-phenix-blue">
+                  <p class="text-[10px] text-gray-500 uppercase font-medium">Chantiers actifs</p>
+                  <p class="text-2xl font-bold text-phenix-blue">8</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm p-3 border-l-4 border-phenix-yellow">
+                  <p class="text-[10px] text-gray-500 uppercase font-medium">Visites du mois</p>
+                  <p class="text-2xl font-bold text-amber-600">12</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm p-3 border-l-4 border-orange-400">
+                  <p class="text-[10px] text-gray-500 uppercase font-medium">Réserves ouvertes</p>
+                  <p class="text-2xl font-bold text-orange-600">23</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm p-3 border-l-4 border-red-500">
+                  <p class="text-[10px] text-gray-500 uppercase font-medium">Escalades</p>
+                  <p class="text-2xl font-bold text-red-600">3</p>
+                </div>
+              </div>
+
+              <!-- Section escalades -->
+              <h2 class="text-base font-bold text-red-700 mb-2">🚨 Réserves urgentes <span class="text-xs bg-red-100 text-red-800 px-1.5 py-0.5 rounded-full">3</span></h2>
+              <div class="bg-white rounded-lg shadow-sm border border-red-200 mb-4">
+                <ul class="divide-y divide-gray-100">
+                  <li class="p-3">
+                    <p class="text-sm font-medium"><span class="text-phenix-blue mr-1">R-VT-001</span> Implantation poteaux</p>
+                    <p class="text-[11px] text-gray-500">CH-2024-12 · 👤 SOCKEEL · 📅 12/05</p>
+                  </li>
+                  <li class="p-3">
+                    <p class="text-sm font-medium"><span class="text-phenix-blue mr-1">R-VC-008</span> Sécurisation accès</p>
+                    <p class="text-[11px] text-gray-500">CH-2024-09 · 👤 DUPONT · 📅 14/05</p>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Visites récentes -->
+              <h2 class="text-base font-bold text-gray-900 mb-2">📋 Visites récentes</h2>
+              <div class="bg-white rounded-lg shadow-sm">
+                <ul class="divide-y divide-gray-100">
+                  <li class="p-3">
+                    <p class="text-sm font-medium">VC-12 — CH-2024-12</p>
+                    <p class="text-[11px] text-gray-500">15 mai 2026 <span class="ml-1 text-[10px] bg-yellow-100 text-yellow-800 px-1.5 rounded-full">Brouillon</span></p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Bottom nav v2.3 -->
+            <div class="absolute bottom-0 left-0 right-0 bg-white border-t grid grid-cols-3">
+              <button class="py-2 flex flex-col items-center gap-0 border-t-2 border-phenix-blue bg-blue-50">
+                <span class="text-xl">📊</span>
+                <span class="text-[10px] font-semibold text-phenix-blue">Tableau</span>
+              </button>
+              <button class="py-2 flex flex-col items-center gap-0 border-t-2 border-transparent">
+                <span class="text-xl">🏗</span>
+                <span class="text-[10px] text-gray-600">Chantiers</span>
+              </button>
+              <button class="py-2 flex flex-col items-center gap-0 border-t-2 border-transparent">
+                <span class="text-xl">👥</span>
+                <span class="text-[10px] text-gray-600">Intervenants</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <ul class="text-sm text-gray-600 mt-4 space-y-1 max-w-sm mx-auto">
+          <li>• Header simple, pas de personnalité</li>
+          <li>• KPI cards basiques (bordure gauche colorée)</li>
+          <li>• Sections en listes denses, peu d'air</li>
+          <li>• Pas de hiérarchie visuelle forte</li>
+        </ul>
+      </div>
+
+      <!-- ============ APRÈS ============ -->
+      <div>
+        <div class="text-center mb-4">
+          <span class="col-label label-proposed">APRÈS</span>
+        </div>
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <!-- Header normal de l'app -->
+            <div class="bg-phenix-blue text-white px-4 py-3 flex items-center justify-between sticky top-0 z-10 shadow-md">
+              <div class="flex items-center gap-2">
+                <div class="bg-white rounded px-2 py-0.5">
+                  <span class="text-phenix-blue font-bold text-xs">PS</span>
+                </div>
+                <span class="text-phenix-yellow text-xs font-semibold">Phenix Rapports</span>
+              </div>
+              <button class="text-white/80 text-xl leading-none">↪</button>
+            </div>
+
+            <!-- Hero banner avec dégradé Phenix (inspiré phenix-centrales-s4e) -->
+            <div class="gradient-phenix text-white px-5 py-5">
+              <h1 class="text-xl font-bold mb-1">⚡ Tableau de bord</h1>
+              <p class="text-blue-100 text-xs">
+                Bonjour Jean-Philippe · <span class="text-phenix-yellow font-semibold">8 chantiers actifs</span>
+              </p>
+            </div>
+
+            <div class="p-4 pb-20 -mt-3">
+              <!-- Search bar surélevée -->
+              <input type="text" placeholder="🔍 Rechercher chantier, visite, réserve..." class="w-full px-4 py-3 border-0 rounded-xl text-sm mb-4 shadow-md ring-1 ring-gray-200" />
+
+              <!-- KPI cards modernes (carrées, fond blanc, icône à gauche en pastille) -->
+              <div class="grid grid-cols-2 gap-2.5 mb-5">
+                <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-200">
+                  <div class="flex items-center gap-2 mb-1">
+                    <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center text-base">🏗</div>
+                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Chantiers</p>
+                  </div>
+                  <p class="text-3xl font-bold text-phenix-blue leading-none">8</p>
+                  <p class="text-[10px] text-gray-500 mt-1">en cours</p>
+                </div>
+                <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-200">
+                  <div class="flex items-center gap-2 mb-1">
+                    <div class="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center text-base">📋</div>
+                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Visites</p>
+                  </div>
+                  <p class="text-3xl font-bold text-amber-600 leading-none">12</p>
+                  <p class="text-[10px] text-gray-500 mt-1">ce mois</p>
+                </div>
+                <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-200">
+                  <div class="flex items-center gap-2 mb-1">
+                    <div class="w-7 h-7 rounded-lg bg-orange-100 flex items-center justify-center text-base">📌</div>
+                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Réserves</p>
+                  </div>
+                  <p class="text-3xl font-bold text-orange-600 leading-none">23</p>
+                  <p class="text-[10px] text-gray-500 mt-1">ouvertes</p>
+                </div>
+                <div class="bg-white rounded-xl p-3 shadow-sm border border-2 border-red-200">
+                  <div class="flex items-center gap-2 mb-1">
+                    <div class="w-7 h-7 rounded-lg bg-red-100 flex items-center justify-center text-base">🚨</div>
+                    <p class="text-[10px] text-red-600 uppercase font-bold tracking-wider">Escalades</p>
+                  </div>
+                  <p class="text-3xl font-bold text-red-600 leading-none">3</p>
+                  <p class="text-[10px] text-red-500 mt-1 font-medium">à traiter</p>
+                </div>
+              </div>
+
+              <!-- Brouillon en card mise en avant -->
+              <div class="bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-xl p-3 mb-5 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-amber-200 flex items-center justify-center text-xl flex-shrink-0">📝</div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-bold text-amber-900">Brouillon en cours</p>
+                  <p class="text-[11px] text-amber-700 truncate">VC-12 · CH-2024-12 · il y a 2h</p>
+                </div>
+                <button class="bg-phenix-blue text-white text-xs font-bold px-3 py-1.5 rounded-lg flex-shrink-0">Reprendre →</button>
+              </div>
+
+              <!-- Section escalades (encadré rouge) -->
+              <div class="bg-white rounded-xl shadow-sm border-2 border-red-100 overflow-hidden mb-4">
+                <div class="bg-red-50 px-4 py-2.5 flex items-center justify-between border-b border-red-100">
+                  <h2 class="text-sm font-bold text-red-700 flex items-center gap-2">🚨 Urgent — Escalades</h2>
+                  <span class="text-[10px] font-bold bg-red-600 text-white px-2 py-0.5 rounded-full">3</span>
+                </div>
+                <div class="divide-y divide-gray-100">
+                  <button class="w-full text-left p-3 hover:bg-red-50 flex items-center gap-2">
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-medium text-gray-900 truncate">
+                        <span class="font-mono text-[10px] bg-gray-100 text-gray-600 px-1 py-0.5 rounded mr-1">R-VT-001</span>
+                        Implantation poteaux
+                      </p>
+                      <p class="text-[11px] text-gray-500 mt-0.5">CH-2024-12 · 👤 SOCKEEL · 📅 12/05</p>
+                    </div>
+                    <span class="text-[10px] font-bold bg-red-100 text-red-800 px-2 py-1 rounded-full flex-shrink-0">🔔 3</span>
+                  </button>
+                  <button class="w-full text-left p-3 hover:bg-red-50 flex items-center gap-2">
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-medium text-gray-900 truncate">
+                        <span class="font-mono text-[10px] bg-gray-100 text-gray-600 px-1 py-0.5 rounded mr-1">R-VC-008</span>
+                        Sécurisation accès
+                      </p>
+                      <p class="text-[11px] text-gray-500 mt-0.5">CH-2024-09 · 👤 DUPONT · 📅 14/05</p>
+                    </div>
+                    <span class="text-[10px] font-bold bg-red-100 text-red-800 px-2 py-1 rounded-full flex-shrink-0">🔔 2</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Visites récentes -->
+              <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4">
+                <div class="bg-gray-50 px-4 py-2.5 flex items-center justify-between border-b border-gray-100">
+                  <h2 class="text-sm font-bold text-gray-700 flex items-center gap-2">📋 Visites récentes</h2>
+                  <button class="text-[11px] font-medium text-phenix-blue">Voir tout →</button>
+                </div>
+                <div class="divide-y divide-gray-100">
+                  <button class="w-full text-left p-3 hover:bg-gray-50 flex items-center gap-2">
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide text-white bg-blue-600 flex-shrink-0">VC</span>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-medium text-gray-900">VC-12 — CH-2024-12</p>
+                      <p class="text-[11px] text-gray-500">15 mai · Ombrières Carrefour Lyon</p>
+                    </div>
+                    <span class="text-[10px] font-bold uppercase bg-yellow-100 text-yellow-800 px-1.5 py-0.5 rounded-full flex-shrink-0">Brouillon</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Bottom nav v2.3 -->
+            <div class="absolute bottom-0 left-0 right-0 bg-white border-t grid grid-cols-3">
+              <button class="py-2 flex flex-col items-center gap-0 border-t-2 border-phenix-blue bg-blue-50">
+                <span class="text-xl">📊</span>
+                <span class="text-[10px] font-semibold text-phenix-blue">Tableau</span>
+              </button>
+              <button class="py-2 flex flex-col items-center gap-0 border-t-2 border-transparent">
+                <span class="text-xl">🏗</span>
+                <span class="text-[10px] text-gray-600">Chantiers</span>
+              </button>
+              <button class="py-2 flex flex-col items-center gap-0 border-t-2 border-transparent">
+                <span class="text-xl">👥</span>
+                <span class="text-[10px] text-gray-600">Intervenants</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <ul class="text-sm text-gray-700 mt-4 space-y-1 max-w-sm mx-auto">
+          <li>✅ <strong>Bandeau dégradé Phenix</strong> avec accueil personnalisé (style phenix-centrales)</li>
+          <li>✅ <strong>KPI cards modernes</strong> : icône en pastille, valeur en gros, label clair</li>
+          <li>✅ <strong>Brouillon</strong> mis en avant dans une card jaune attractive</li>
+          <li>✅ Sections avec <strong>en-tête coloré</strong> (rouge urgent / gris normal)</li>
+          <li>✅ Codes réserves <strong>en monospace dans pill grise</strong> (référence visuelle)</li>
+          <li>✅ Badges VC/VT <strong>plein couleur</strong> dans les listes</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <p class="text-center text-sm text-gray-500 mt-12">⚠️ Mockup visuel — rien n'est touché tant que tu n'as pas validé.</p>
+  </div>
+</body>
+</html>
