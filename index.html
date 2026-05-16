@@ -150,7 +150,7 @@
             </button>
           </form>
 
-          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v2.5</p>
+          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v2.6</p>
         </div>
       </div>
     </template>
@@ -226,6 +226,68 @@
                   :class="view === 'intervenants' ? 'text-phenix-blue' : 'text-gray-600'">Intervenants</span>
           </button>
         </nav>
+
+        <!-- ===== LAYOUT 2 PANNEAUX (iPad portrait + Desktop) =====
+             Sur < 768px (mobile) : flex se désactive, sidebar masquée, main full width
+             Sur ≥ 768px (md+, iPad portrait + desktop) : sidebar à gauche + main à droite
+             La sidebar liste les chantiers (rapide accès, contexte permanent). -->
+        <div class="md:flex md:items-stretch md:h-[calc(100vh-64px)] md:overflow-hidden">
+
+          <!-- ===== SIDEBAR CHANTIERS (md+ uniquement) ===== -->
+          <aside class="hidden md:flex md:flex-col md:w-56 lg:w-72 xl:w-80 md:flex-shrink-0 bg-white border-r border-gray-200">
+            <!-- Search + tabs Actifs/Archivés -->
+            <div class="p-3 border-b border-gray-100 flex-shrink-0">
+              <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-2">Chantiers</p>
+              <input type="text" placeholder="🔍 Rechercher..." x-model="searchQuery" @input="performSearch()"
+                class="w-full px-3 py-1.5 bg-gray-50 border-0 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-phenix-blue" />
+            </div>
+            <div class="px-3 pt-2 pb-1 flex gap-2 text-xs flex-shrink-0">
+              <button @click="filterArchive = false; loadChantiers()"
+                class="px-2 py-1 rounded font-bold transition-colors"
+                :class="!filterArchive ? 'bg-phenix-blue text-white' : 'text-gray-600 hover:bg-gray-100'">
+                Actifs
+              </button>
+              <button @click="filterArchive = true; loadChantiers()"
+                class="px-2 py-1 rounded font-bold transition-colors"
+                :class="filterArchive ? 'bg-phenix-blue text-white' : 'text-gray-600 hover:bg-gray-100'">
+                Archivés
+              </button>
+            </div>
+            <!-- Liste compacte des chantiers (scroll indépendant) -->
+            <div class="flex-1 overflow-y-auto p-2 space-y-1">
+              <template x-if="chantiers.length === 0">
+                <p class="text-xs text-gray-500 italic p-2">Aucun chantier.</p>
+              </template>
+              <template x-for="c in chantiers" :key="c.id">
+                <button @click="openChantier(c)"
+                  class="w-full text-left px-3 py-2.5 rounded-lg transition-colors"
+                  :class="selectedChantier?.id === c.id ? 'bg-blue-50 border-l-4 border-phenix-blue' : 'hover:bg-gray-50 border-l-4 border-transparent'">
+                  <p class="font-mono text-[10px] text-gray-500 font-bold tracking-wider" x-text="c.code"></p>
+                  <p class="text-sm font-medium text-gray-900 truncate"
+                     :class="selectedChantier?.id === c.id ? 'font-bold' : ''"
+                     x-text="c.nom"></p>
+                  <p class="text-[11px] text-gray-500 mt-0.5">
+                    <span x-show="c.puissance_kwc"><span x-text="c.puissance_kwc"></span> kWc</span>
+                    <span x-show="c.puissance_kwc && c.visites_count"> · </span>
+                    <span x-show="c.visites_count"><span x-text="c.visites_count"></span> vis.</span>
+                    <span x-show="c.reserves_count > 0" class="text-orange-600 font-bold ml-1">
+                      · <span x-text="c.reserves_count"></span> rés.
+                    </span>
+                  </p>
+                </button>
+              </template>
+            </div>
+            <!-- Bouton + Nouveau chantier en bas -->
+            <div class="p-2 border-t border-gray-100 flex-shrink-0">
+              <button @click="openChantierForm()"
+                class="w-full py-2 rounded-md bg-phenix-yellow hover:opacity-90 text-phenix-blue-dark text-sm font-bold flex items-center justify-center gap-1.5 transition-opacity">
+                <span class="text-base leading-none">+</span> Nouveau chantier
+              </button>
+            </div>
+          </aside>
+
+          <!-- ===== PANNEAU PRINCIPAL : toutes les vues ===== -->
+          <div class="md:flex-1 md:overflow-y-auto">
 
         <!-- ===== VUE TABLEAU DE BORD ===== -->
         <template x-if="view === 'dashboard'">
@@ -1712,6 +1774,9 @@
             </div>
           </main>
         </template>
+
+          </div><!-- /panneau principal -->
+        </div><!-- /layout 2 panneaux -->
 
         <!-- ===== MODALE CHANTIER (création/édition) ===== -->
         <template x-if="modal === 'chantier'">
@@ -3386,6 +3451,8 @@
             this.user = session.user;
             await this.loadDashboard();
             await this.loadMembresPhenix();
+            // Charger les chantiers pour la sidebar (visible en permanence sur iPad/Desktop)
+            await this.loadChantiers();
           }
           this.loading = false;
 
@@ -3421,6 +3488,7 @@
           this.view = "dashboard";
           await this.loadDashboard();
           await this.loadMembresPhenix();
+          await this.loadChantiers(); // Pour la sidebar permanente (iPad/Desktop)
           this.loginLoading = false;
         },
 
