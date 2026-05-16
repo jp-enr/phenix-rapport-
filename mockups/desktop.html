@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mockup Desktop / iPad — 2 panneaux</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; background: #f3f4f6; }
+    .text-phenix-blue { color: #0D4484; }
+    .text-phenix-blue-dark { color: #08305F; }
+    .bg-phenix-blue { background-color: #0D4484; }
+    .bg-phenix-blue-dark { background-color: #08305F; }
+    .bg-phenix-yellow { background-color: #F2AC10; }
+    .text-phenix-yellow { color: #F2AC10; }
+    .border-phenix-blue { border-color: #0D4484; }
+    .gradient-phenix { background: linear-gradient(135deg, #0D4484, #08305F); }
+    .device-frame {
+      background: #1f2937; border-radius: 12px; padding: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      margin-bottom: 32px;
+    }
+    .device-screen {
+      background: #f9fafb; border-radius: 4px; overflow: hidden; position: relative;
+    }
+    .col-label {
+      font-weight: 700; text-align: center; margin-bottom: 12px; padding: 6px 12px;
+      border-radius: 6px; display: inline-block;
+    }
+    .label-current { background: #fee2e2; color: #991b1b; }
+    .label-proposed { background: #dcfce7; color: #166534; }
+  </style>
+</head>
+<body class="py-8 px-4">
+
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-2xl font-bold text-center text-gray-900 mb-2">Refonte 2 panneaux — iPad + Desktop</h1>
+    <p class="text-center text-gray-600 mb-8">Layout maître-détail (sidebar chantiers à gauche + détail à droite)</p>
+
+    <!-- ============ DESKTOP / iPad LANDSCAPE ============ -->
+    <div class="mb-12">
+      <div class="text-center mb-4">
+        <span class="col-label label-proposed">DESKTOP / iPad paysage (≥ 1024 px)</span>
+      </div>
+      <div class="device-frame">
+        <div class="device-screen" style="height: 720px;">
+          <!-- Header avec top nav -->
+          <div class="bg-phenix-blue text-white px-5 py-3 flex items-center justify-between shadow-md">
+            <div class="flex items-center gap-3">
+              <div class="bg-white rounded px-2 py-1">
+                <span class="text-phenix-blue font-bold text-sm">PS</span>
+              </div>
+              <span class="text-phenix-yellow text-xs font-semibold">PHENIX RAPPORTS</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="text-sm px-3 py-1.5 rounded bg-phenix-yellow text-phenix-blue-dark font-bold">📊 Tableau</button>
+              <button class="text-sm px-3 py-1.5 rounded bg-white/10 text-white">🏗 Chantiers</button>
+              <button class="text-sm px-3 py-1.5 rounded bg-white/10 text-white">👥 Intervenants</button>
+              <span class="text-xs text-blue-100 ml-2">j.debomy@jpenr.fr</span>
+              <button class="text-sm px-3 py-1.5 rounded bg-white/10 text-white">Déconnexion</button>
+            </div>
+          </div>
+
+          <!-- Layout 2 panneaux : sidebar + main -->
+          <div class="flex" style="height: calc(720px - 56px);">
+
+            <!-- SIDEBAR : chantiers (280px) -->
+            <aside class="w-72 bg-white border-r border-gray-200 flex flex-col">
+              <!-- Sidebar header -->
+              <div class="p-3 border-b border-gray-100">
+                <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-2">Chantiers</p>
+                <input type="text" placeholder="🔍 Rechercher..." class="w-full px-3 py-1.5 bg-gray-50 border-0 rounded-md text-sm" />
+              </div>
+              <!-- Tabs Actifs / Archivés -->
+              <div class="px-3 pt-2 pb-1 flex gap-2 text-xs">
+                <button class="px-2 py-1 rounded font-bold bg-phenix-blue text-white">Actifs (8)</button>
+                <button class="px-2 py-1 rounded text-gray-600 hover:bg-gray-100">Archivés</button>
+              </div>
+              <!-- Liste de chantiers (compactes) -->
+              <div class="flex-1 overflow-y-auto p-2 space-y-1">
+                <!-- Chantier ACTIF -->
+                <button class="w-full text-left px-3 py-2.5 rounded-lg bg-blue-50 border-l-4 border-phenix-blue">
+                  <p class="font-mono text-[10px] text-gray-500 font-bold">CH-2024-12</p>
+                  <p class="text-sm font-bold text-gray-900 truncate">Ombrières Carrefour Lyon</p>
+                  <p class="text-[11px] text-gray-500 mt-0.5">320 kWc · 8 visites · <span class="text-orange-600 font-bold">3 réserves</span></p>
+                </button>
+                <button class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-gray-50">
+                  <p class="font-mono text-[10px] text-gray-500 font-bold">CH-2024-11</p>
+                  <p class="text-sm font-medium text-gray-900 truncate">Toiture LIDL Marseille</p>
+                  <p class="text-[11px] text-gray-500 mt-0.5">180 kWc · 4 visites</p>
+                </button>
+                <button class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-gray-50">
+                  <p class="font-mono text-[10px] text-gray-500 font-bold">CH-2024-10</p>
+                  <p class="text-sm font-medium text-gray-900 truncate">Carport Solar SAS</p>
+                  <p class="text-[11px] text-gray-500 mt-0.5">95 kWc · 2 visites</p>
+                </button>
+                <button class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-gray-50">
+                  <p class="font-mono text-[10px] text-gray-500 font-bold">CH-2024-09</p>
+                  <p class="text-sm font-medium text-gray-900 truncate">Hangar agricole Dumas</p>
+                  <p class="text-[11px] text-gray-500 mt-0.5">240 kWc · 6 visites · <span class="text-orange-600 font-bold">1 réserve</span></p>
+                </button>
+                <button class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-gray-50">
+                  <p class="font-mono text-[10px] text-gray-500 font-bold">CH-2024-08</p>
+                  <p class="text-sm font-medium text-gray-900 truncate">Ombrière parking ENEDIS</p>
+                  <p class="text-[11px] text-gray-500 mt-0.5">410 kWc · 12 visites</p>
+                </button>
+                <button class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-gray-50">
+                  <p class="font-mono text-[10px] text-gray-500 font-bold">CH-2024-07</p>
+                  <p class="text-sm font-medium text-gray-900 truncate">Toit école Marsane</p>
+                  <p class="text-[11px] text-gray-500 mt-0.5">85 kWc · 5 visites</p>
+                </button>
+              </div>
+              <!-- Bouton + Nouveau chantier en bas -->
+              <div class="p-2 border-t border-gray-100">
+                <button class="w-full py-2 rounded-md bg-phenix-yellow text-phenix-blue-dark text-sm font-bold flex items-center justify-center gap-1.5">
+                  <span class="text-base">+</span> Nouveau chantier
+                </button>
+              </div>
+            </aside>
+
+            <!-- MAIN PANEL : détail du chantier sélectionné -->
+            <main class="flex-1 overflow-y-auto bg-gray-50">
+              <!-- Hero du chantier -->
+              <div class="gradient-phenix text-white px-6 py-5">
+                <div class="flex items-start justify-between gap-3 mb-2">
+                  <div>
+                    <p class="font-mono text-xs text-blue-100 mb-0.5">CH-2024-12</p>
+                    <h1 class="text-2xl font-bold">Ombrières Carrefour Lyon</h1>
+                    <p class="text-blue-100 text-sm mt-1">📍 12 rue de la Centrale, 69100 Lyon</p>
+                  </div>
+                  <span class="text-xs px-2.5 py-1 rounded-full font-bold bg-green-100 text-green-800 uppercase">En cours</span>
+                </div>
+                <!-- Mini stats -->
+                <div class="flex items-center gap-5 pt-2 mt-3 border-t border-white/20">
+                  <div>
+                    <span class="text-phenix-yellow font-bold text-lg">320</span><span class="text-xs text-blue-100 ml-1">kWc</span>
+                  </div>
+                  <div class="h-4 w-px bg-white/30"></div>
+                  <div>
+                    <span class="font-bold text-lg">8</span><span class="text-xs text-blue-100 ml-1">visites</span>
+                  </div>
+                  <div class="h-4 w-px bg-white/30"></div>
+                  <div>
+                    <span class="font-bold text-lg text-orange-300">3</span><span class="text-xs text-blue-100 ml-1">réserves</span>
+                  </div>
+                  <div class="ml-auto flex gap-2">
+                    <button class="text-xs bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded">✏ Modifier</button>
+                    <button class="text-xs bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded">📦 Archives</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-6">
+                <!-- Tabs : Visites / Intervenants / Photos -->
+                <div class="flex gap-1 mb-5 bg-white rounded-lg p-1 shadow-sm w-fit">
+                  <button class="px-4 py-2 rounded-md text-sm font-bold text-phenix-blue bg-blue-50">📋 Visites (8)</button>
+                  <button class="px-4 py-2 rounded-md text-sm text-gray-600 hover:bg-gray-50">👥 Intervenants (5)</button>
+                  <button class="px-4 py-2 rounded-md text-sm text-gray-600 hover:bg-gray-50">🖼 Photos (24)</button>
+                </div>
+
+                <!-- Filtres + Bouton nouvelle visite -->
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                  <div class="flex gap-2 text-sm">
+                    <button class="px-3 py-1.5 rounded-md bg-phenix-blue text-white font-medium">Toutes</button>
+                    <button class="px-3 py-1.5 rounded-md text-gray-600 hover:bg-white">VC</button>
+                    <button class="px-3 py-1.5 rounded-md text-gray-600 hover:bg-white">VT</button>
+                  </div>
+                  <button class="bg-phenix-yellow text-phenix-blue-dark font-bold py-1.5 px-4 rounded-md text-sm">+ Nouvelle visite</button>
+                </div>
+
+                <!-- Grille de visites en 2 colonnes -->
+                <div class="grid grid-cols-2 gap-3">
+                  <!-- Visite 1 -->
+                  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-3">
+                      <div class="flex items-center gap-2 mb-1.5">
+                        <span class="text-xs font-bold px-2 py-0.5 rounded uppercase text-white bg-blue-600">VC</span>
+                        <span class="font-bold text-gray-900 text-sm">VC-12</span>
+                        <span class="ml-auto text-[10px] px-2 py-0.5 rounded-full font-bold bg-yellow-100 text-yellow-800">Brouillon</span>
+                      </div>
+                      <p class="text-base font-semibold text-gray-900">15 mai 2026</p>
+                      <p class="text-xs text-gray-600">🕐 10:30 – 12:00 · ☀️ Soleil</p>
+                    </div>
+                    <div class="flex border-t border-gray-100 text-xs">
+                      <button class="flex-1 py-2 font-semibold text-phenix-blue hover:bg-blue-50">📂 Ouvrir</button>
+                      <div class="w-px bg-gray-100"></div>
+                      <button class="px-3 py-2 text-gray-600 hover:bg-gray-50">✏</button>
+                      <div class="w-px bg-gray-100"></div>
+                      <button class="px-3 py-2 text-gray-600 hover:bg-gray-50">📦</button>
+                    </div>
+                  </div>
+                  <!-- Visite 2 -->
+                  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-3">
+                      <div class="flex items-center gap-2 mb-1.5">
+                        <span class="text-xs font-bold px-2 py-0.5 rounded uppercase text-white bg-orange-500">VT</span>
+                        <span class="font-bold text-gray-900 text-sm">VT-08</span>
+                        <span class="ml-auto text-[10px] px-2 py-0.5 rounded-full font-bold bg-blue-100 text-blue-800">Validée</span>
+                      </div>
+                      <p class="text-base font-semibold text-gray-900">13 mai 2026</p>
+                      <p class="text-xs text-gray-600">🕐 09:00 – 11:30 · ☁️ Nuageux</p>
+                      <div class="bg-orange-50 border border-orange-200 rounded-md px-2 py-1 text-[11px] text-orange-800 inline-flex items-center gap-1 mt-1.5">
+                        🏢 <span class="font-semibold">4M MEREU BTP</span>
+                      </div>
+                    </div>
+                    <div class="flex border-t border-gray-100 text-xs">
+                      <button class="flex-1 py-2 font-semibold text-orange-600 hover:bg-orange-50">📂 Ouvrir</button>
+                      <div class="w-px bg-gray-100"></div>
+                      <button class="px-3 py-2 text-gray-600 hover:bg-gray-50">✏</button>
+                      <div class="w-px bg-gray-100"></div>
+                      <button class="px-3 py-2 text-gray-600 hover:bg-gray-50">📦</button>
+                    </div>
+                  </div>
+                  <!-- Visite 3 -->
+                  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-3">
+                      <div class="flex items-center gap-2 mb-1.5">
+                        <span class="text-xs font-bold px-2 py-0.5 rounded uppercase text-white bg-blue-600">VC</span>
+                        <span class="font-bold text-gray-900 text-sm">VC-11</span>
+                        <span class="ml-auto text-[10px] px-2 py-0.5 rounded-full font-bold bg-green-100 text-green-800">Diffusée</span>
+                      </div>
+                      <p class="text-base font-semibold text-gray-900">06 mai 2026</p>
+                      <p class="text-xs text-gray-600">🕐 14:00 – 16:00 · ☀️ Soleil</p>
+                    </div>
+                    <div class="flex border-t border-gray-100 text-xs">
+                      <button class="flex-1 py-2 font-semibold text-phenix-blue hover:bg-blue-50">📂 Ouvrir</button>
+                      <div class="w-px bg-gray-100"></div>
+                      <button class="px-3 py-2 text-gray-600 hover:bg-gray-50">✏</button>
+                      <div class="w-px bg-gray-100"></div>
+                      <button class="px-3 py-2 text-gray-600 hover:bg-gray-50">📦</button>
+                    </div>
+                  </div>
+                  <!-- Visite 4 -->
+                  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-3">
+                      <div class="flex items-center gap-2 mb-1.5">
+                        <span class="text-xs font-bold px-2 py-0.5 rounded uppercase text-white bg-blue-600">VC</span>
+                        <span class="font-bold text-gray-900 text-sm">VC-10</span>
+                        <span class="ml-auto text-[10px] px-2 py-0.5 rounded-full font-bold bg-green-100 text-green-800">Diffusée</span>
+                      </div>
+                      <p class="text-base font-semibold text-gray-900">29 avr 2026</p>
+                      <p class="text-xs text-gray-600">🕐 14:00 – 17:00 · ☁️ Couvert</p>
+                    </div>
+                    <div class="flex border-t border-gray-100 text-xs">
+                      <button class="flex-1 py-2 font-semibold text-phenix-blue hover:bg-blue-50">📂 Ouvrir</button>
+                      <div class="w-px bg-gray-100"></div>
+                      <button class="px-3 py-2 text-gray-600 hover:bg-gray-50">✏</button>
+                      <div class="w-px bg-gray-100"></div>
+                      <button class="px-3 py-2 text-gray-600 hover:bg-gray-50">📦</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
+      <ul class="text-sm text-gray-700 space-y-1 max-w-3xl mx-auto">
+        <li>✅ <strong>Sidebar permanente</strong> à gauche (280 px) avec recherche + liste compacte de chantiers + bouton « + Nouveau »</li>
+        <li>✅ <strong>Chantier actif</strong> mis en évidence (fond bleu clair + bordure gauche bleue)</li>
+        <li>✅ <strong>Compteurs</strong> visibles directement (visites + réserves en orange si > 0)</li>
+        <li>✅ <strong>Hero du chantier</strong> reprend le dégradé Phenix avec stats inline</li>
+        <li>✅ <strong>Tabs</strong> pour Visites / Intervenants / Photos dans le détail</li>
+        <li>✅ <strong>Grille 2 colonnes</strong> pour les cartes visites (gain d'espace énorme)</li>
+      </ul>
+    </div>
+
+    <!-- ============ iPad PORTRAIT ============ -->
+    <div class="mb-12">
+      <div class="text-center mb-4">
+        <span class="col-label label-proposed">iPad PORTRAIT (≈ 768 px)</span>
+      </div>
+      <div class="device-frame mx-auto" style="max-width: 600px;">
+        <div class="device-screen" style="height: 800px;">
+          <!-- Header avec top nav -->
+          <div class="bg-phenix-blue text-white px-4 py-3 flex items-center justify-between shadow-md">
+            <div class="flex items-center gap-2">
+              <div class="bg-white rounded px-2 py-1">
+                <span class="text-phenix-blue font-bold text-sm">PS</span>
+              </div>
+              <span class="text-phenix-yellow text-[11px] font-semibold">RAPPORTS</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <button class="text-xs px-2 py-1 rounded bg-phenix-yellow text-phenix-blue-dark font-bold">📊</button>
+              <button class="text-xs px-2 py-1 rounded bg-white/10 text-white">🏗</button>
+              <button class="text-xs px-2 py-1 rounded bg-white/10 text-white">👥</button>
+              <button class="text-xs px-2 py-1 rounded bg-white/10 text-white">↪</button>
+            </div>
+          </div>
+
+          <!-- Layout 2 panneaux compact -->
+          <div class="flex" style="height: calc(800px - 50px);">
+            <!-- Sidebar plus étroite -->
+            <aside class="w-56 bg-white border-r border-gray-200 flex flex-col">
+              <div class="p-2 border-b border-gray-100">
+                <input type="text" placeholder="🔍 ..." class="w-full px-2 py-1.5 bg-gray-50 border-0 rounded-md text-xs" />
+              </div>
+              <div class="flex-1 overflow-y-auto p-1.5 space-y-1">
+                <button class="w-full text-left px-2 py-2 rounded-lg bg-blue-50 border-l-4 border-phenix-blue">
+                  <p class="font-mono text-[9px] text-gray-500 font-bold">CH-2024-12</p>
+                  <p class="text-xs font-bold text-gray-900 truncate">Ombrières Carrefour Lyon</p>
+                </button>
+                <button class="w-full text-left px-2 py-2 rounded-lg hover:bg-gray-50">
+                  <p class="font-mono text-[9px] text-gray-500 font-bold">CH-2024-11</p>
+                  <p class="text-xs text-gray-900 truncate">Toiture LIDL Marseille</p>
+                </button>
+                <button class="w-full text-left px-2 py-2 rounded-lg hover:bg-gray-50">
+                  <p class="font-mono text-[9px] text-gray-500 font-bold">CH-2024-10</p>
+                  <p class="text-xs text-gray-900 truncate">Carport Solar SAS</p>
+                </button>
+              </div>
+            </aside>
+
+            <main class="flex-1 overflow-y-auto bg-gray-50">
+              <div class="gradient-phenix text-white px-4 py-3">
+                <p class="font-mono text-[10px] text-blue-100">CH-2024-12</p>
+                <h1 class="text-lg font-bold">Ombrières Carrefour Lyon</h1>
+                <p class="text-blue-100 text-xs mt-0.5">📍 12 rue de la Centrale, 69100 Lyon</p>
+              </div>
+              <div class="p-3">
+                <div class="flex gap-1 mb-3 bg-white rounded-lg p-0.5 shadow-sm w-fit">
+                  <button class="px-2.5 py-1 rounded text-xs font-bold text-phenix-blue bg-blue-50">📋 Visites</button>
+                  <button class="px-2.5 py-1 rounded text-xs text-gray-600">👥 Inter</button>
+                </div>
+                <!-- Grille 1 col (étroit) -->
+                <div class="space-y-2">
+                  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-2.5">
+                      <div class="flex items-center gap-1.5 mb-1">
+                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase text-white bg-blue-600">VC</span>
+                        <span class="font-bold text-gray-900 text-xs">VC-12</span>
+                        <span class="ml-auto text-[9px] px-1.5 py-0.5 rounded-full font-bold bg-yellow-100 text-yellow-800">Brouillon</span>
+                      </div>
+                      <p class="text-sm font-semibold text-gray-900">15 mai 2026</p>
+                    </div>
+                  </div>
+                  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-2.5">
+                      <div class="flex items-center gap-1.5 mb-1">
+                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded uppercase text-white bg-orange-500">VT</span>
+                        <span class="font-bold text-gray-900 text-xs">VT-08</span>
+                        <span class="ml-auto text-[9px] px-1.5 py-0.5 rounded-full font-bold bg-blue-100 text-blue-800">Validée</span>
+                      </div>
+                      <p class="text-sm font-semibold text-gray-900">13 mai 2026</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
+      <p class="text-center text-sm text-gray-600 mt-4">Sidebar plus étroite (224 px) · main panel 1 col · top nav avec icônes seules</p>
+    </div>
+
+    <p class="text-center text-sm text-gray-500 mt-8">⚠️ Mockup visuel — rien n'est touché tant que tu n'as pas validé.</p>
+  </div>
+</body>
+</html>
