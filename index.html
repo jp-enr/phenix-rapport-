@@ -31,6 +31,9 @@
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
   <!-- JSZip : génère un ZIP des photos d'une visite avant suppression définitive -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <!-- Frappe Gantt : mini-Gantt drag-and-drop pour le planning chantier -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css" />
+  <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.umd.js"></script>
   <!-- MSAL.js : authentification Microsoft 365 pour intégration Outlook/Graph
        NB : on utilise le CDN jsDelivr (officiel, public) plutôt que alcdn.msauth.net
        (qui n'est pas un CDN public mais un domaine interne Microsoft non accessible). -->
@@ -150,7 +153,7 @@
             </button>
           </form>
 
-          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v2.8</p>
+          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v2.9</p>
         </div>
       </div>
     </template>
@@ -286,6 +289,13 @@
                 :class="view === 'intervenants' ? 'text-phenix-blue bg-blue-50 border-phenix-blue font-bold' : 'text-gray-700 hover:bg-gray-50 border-transparent'">
                 <span class="text-base">👥</span>
                 <span>Intervenants</span>
+              </button>
+              <button @click="goPlanning()"
+                class="w-full text-left px-4 py-2.5 flex items-center gap-3 text-sm transition-colors border-l-4"
+                :class="view === 'planning' ? 'text-phenix-blue bg-blue-50 border-phenix-blue font-bold' : 'text-gray-700 hover:bg-gray-50 border-transparent'">
+                <span class="text-base">📅</span>
+                <span>Planning</span>
+                <span class="ml-auto text-[9px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded uppercase">Beta</span>
               </button>
 
               <p class="px-4 py-1 text-[10px] font-bold tracking-widest text-gray-400 uppercase mt-4">Administration</p>
@@ -1818,6 +1828,86 @@
                   </div>
                 </div>
               </template>
+            </div>
+          </main>
+        </template>
+
+        <!-- ===== VUE PLANNING (Mini-Gantt drag-and-drop) ===== -->
+        <template x-if="view === 'planning'">
+          <main class="max-w-7xl mx-auto">
+            <!-- Hero -->
+            <div class="px-5 py-5 text-white shadow-md" style="background: linear-gradient(135deg, #0D4484, #08305F);">
+              <h1 class="text-xl font-bold mb-1">📅 Planning chantier</h1>
+              <p class="text-blue-100 text-xs">Visites, réserves et phases sur une frise temporelle. <span class="text-phenix-yellow">Cliquer-glisser</span> les barres pour reprogrammer.</p>
+            </div>
+
+            <div class="p-4">
+              <!-- Sélecteur de chantier + contrôles -->
+              <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-4 flex items-center gap-3 flex-wrap">
+                <label class="text-sm font-semibold text-gray-700 flex-shrink-0">Chantier :</label>
+                <select x-model="planningChantierId" @change="loadPlanning()"
+                  class="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-phenix-blue">
+                  <option value="">— Choisir un chantier —</option>
+                  <template x-for="c in chantiers" :key="c.id">
+                    <option :value="c.id" x-text="c.code + ' — ' + c.nom"></option>
+                  </template>
+                </select>
+
+                <!-- Vue : Jour / Semaine / Mois -->
+                <div class="flex gap-1 bg-gray-100 rounded-lg p-1 text-xs">
+                  <button @click="setPlanningView('Day')"
+                    :class="planningViewMode === 'Day' ? 'bg-white shadow-sm font-bold text-phenix-blue' : 'text-gray-600'"
+                    class="px-3 py-1 rounded">Jour</button>
+                  <button @click="setPlanningView('Week')"
+                    :class="planningViewMode === 'Week' ? 'bg-white shadow-sm font-bold text-phenix-blue' : 'text-gray-600'"
+                    class="px-3 py-1 rounded">Semaine</button>
+                  <button @click="setPlanningView('Month')"
+                    :class="planningViewMode === 'Month' ? 'bg-white shadow-sm font-bold text-phenix-blue' : 'text-gray-600'"
+                    class="px-3 py-1 rounded">Mois</button>
+                </div>
+              </div>
+
+              <!-- Légende -->
+              <template x-if="planningChantierId">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 px-4 py-3 mb-4 flex flex-wrap gap-x-5 gap-y-2 text-xs">
+                  <span class="flex items-center gap-2">
+                    <span class="inline-block w-6 h-3 rounded" style="background:#93c5fd; border:1px solid #0D4484;"></span> Visite VC
+                  </span>
+                  <span class="flex items-center gap-2">
+                    <span class="inline-block w-6 h-3 rounded" style="background:#fdba74; border:1px solid #ea580c;"></span> Visite VT
+                  </span>
+                  <span class="flex items-center gap-2">
+                    <span class="inline-block w-6 h-3 rounded" style="background:#fde68a; border:1px dashed #d97706;"></span> Réserve ouverte
+                  </span>
+                </div>
+              </template>
+
+              <!-- Gantt -->
+              <template x-if="planningChantierId">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+                  <svg id="gantt-svg" style="min-height: 200px;"></svg>
+                  <template x-if="planningTasks.length === 0">
+                    <div class="p-8 text-center text-gray-500">
+                      <p class="text-3xl mb-2">📭</p>
+                      <p class="text-sm">Aucune visite ni réserve sur ce chantier.</p>
+                    </div>
+                  </template>
+                </div>
+              </template>
+
+              <!-- Empty state -->
+              <template x-if="!planningChantierId">
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-8 text-center">
+                  <p class="text-3xl mb-2">👆</p>
+                  <p class="text-sm font-bold text-amber-900">Sélectionne un chantier pour voir son planning</p>
+                  <p class="text-xs text-amber-700 mt-1">Le Gantt affichera ses visites (VC/VT) et ses réserves ouvertes avec leurs échéances.</p>
+                </div>
+              </template>
+
+              <!-- Note bêta -->
+              <p class="text-[11px] text-gray-500 italic mt-3">
+                💡 Cette vue est en bêta. Drag-and-drop visuel uniquement pour l'instant — la persistance des dates en base arrive bientôt.
+              </p>
             </div>
           </main>
         </template>
@@ -3404,6 +3494,12 @@
         searchResults: [],
         searchTimer: null,
 
+        // Planning (Mini-Gantt)
+        planningChantierId: "",
+        planningTasks: [],
+        planningViewMode: "Week", // 'Day' | 'Week' | 'Month'
+        _ganttInstance: null,
+
         // Filtres
         filterArchive: false,
         filterType: "",
@@ -4085,6 +4181,111 @@
           this.filterType = "";
           this.filterArchive = false;
           this.loadIntervenants();
+        },
+
+        // ===== PLANNING (Mini-Gantt) =====
+        async goPlanning() {
+          this.view = "planning";
+          this.selectedVisite = null;
+          // Si un chantier est déjà sélectionné on charge son planning automatiquement
+          if (this.selectedChantier?.id && !this.planningChantierId) {
+            this.planningChantierId = this.selectedChantier.id;
+          }
+          // S'assurer que la liste des chantiers est chargée (pour le sélecteur)
+          if (this.chantiers.length === 0) await this.loadChantiers();
+          if (this.planningChantierId) {
+            // Petit délai pour laisser Alpine rendre le SVG avant d'instancier Frappe Gantt
+            this.$nextTick(() => this.loadPlanning());
+          }
+        },
+
+        async loadPlanning() {
+          if (!this.planningChantierId) {
+            this.planningTasks = [];
+            return;
+          }
+          // 1) Charger visites du chantier (VC + VT, non archivées)
+          const { data: visites } = await supabaseClient
+            .from("visites")
+            .select("id, numero_vc, type_visite, date_visite, statut")
+            .eq("chantier_id", this.planningChantierId)
+            .neq("type_visite", "VI")
+            .order("date_visite", { ascending: true });
+          // 2) Charger réserves ouvertes avec échéance
+          const { data: reserves } = await supabaseClient
+            .from("reserves")
+            .select("id, numero, description_courte, statut, echeance, created_at")
+            .eq("chantier_id", this.planningChantierId)
+            .eq("statut", "Ouverte")
+            .not("echeance", "is", null);
+
+          // Construire les tasks pour Frappe Gantt
+          const tasks = [];
+          (visites || []).forEach(v => {
+            if (!v.date_visite) return;
+            tasks.push({
+              id: "vis-" + v.id,
+              name: (v.type_visite === "VT" ? "🔧 " : "📋 ") + v.numero_vc,
+              start: v.date_visite,
+              end: v.date_visite, // visite = 1 jour
+              progress: v.statut === "Diffusée" ? 100 : v.statut === "Validée" ? 80 : 40,
+              custom_class: v.type_visite === "VT" ? "bar-vt" : "bar-vc",
+            });
+          });
+          (reserves || []).forEach(r => {
+            const startDate = (r.created_at || r.echeance).slice(0, 10);
+            tasks.push({
+              id: "res-" + r.id,
+              name: "📌 " + r.numero + " — " + (r.description_courte || "").slice(0, 40),
+              start: startDate,
+              end: r.echeance,
+              progress: 0,
+              custom_class: "bar-reserve",
+            });
+          });
+
+          this.planningTasks = tasks;
+
+          // Détruire l'instance Gantt précédente et recréer
+          this.$nextTick(() => this._renderGantt());
+        },
+
+        _renderGantt() {
+          const svg = document.getElementById("gantt-svg");
+          if (!svg || this.planningTasks.length === 0) return;
+          // Vider le SVG (Frappe Gantt n'a pas de destroy() officiel)
+          svg.innerHTML = "";
+          try {
+            this._ganttInstance = new Gantt(svg, this.planningTasks, {
+              view_mode: this.planningViewMode || "Week",
+              bar_height: 22,
+              bar_corner_radius: 4,
+              padding: 14,
+              header_height: 50,
+              column_width: 30,
+              language: "fr",
+              on_click: (task) => {
+                // TODO Étape 2 : ouvrir la visite/réserve correspondante
+                console.log("Tâche cliquée :", task.id);
+              },
+              on_date_change: (task, start, end) => {
+                // TODO Étape 2 : persister vers Supabase
+                this.showToast("Date modifiée (persistance arrive en Étape 2)", "info");
+                console.log("Date changée :", task.id, start, end);
+              },
+            });
+          } catch (err) {
+            console.error("Erreur Frappe Gantt :", err);
+          }
+        },
+
+        setPlanningView(mode) {
+          this.planningViewMode = mode;
+          if (this._ganttInstance && this._ganttInstance.change_view_mode) {
+            this._ganttInstance.change_view_mode(mode);
+          } else if (this.planningTasks.length > 0) {
+            this._renderGantt();
+          }
         },
 
         async loadIntervenants() {
