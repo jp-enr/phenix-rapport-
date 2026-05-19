@@ -1896,10 +1896,12 @@
 
               <!-- Gantt -->
               <template x-if="planningChantierId">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-                  <template x-if="planningTasks.length > 0">
-                    <svg id="gantt-svg" style="min-height: 200px;"></svg>
-                  </template>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto relative">
+                  <!-- Le SVG est TOUJOURS dans le DOM (même si vide) pour que Frappe Gantt
+                       puisse le retrouver de façon fiable lors du re-render -->
+                  <svg id="gantt-svg" style="width: 100%; min-height: 200px;"
+                       :style="planningTasks.length === 0 ? 'display:none' : ''"></svg>
+                  <!-- Empty state -->
                   <template x-if="planningTasks.length === 0">
                     <div class="p-10 text-center text-gray-500">
                       <p class="text-4xl mb-3">📋</p>
@@ -4383,11 +4385,33 @@
         },
 
         _renderGantt() {
+          // Petit délai pour s'assurer qu'Alpine a fini de rendre le SVG dans le DOM
+          // après une création/modification de tâche.
+          setTimeout(() => this._renderGanttNow(), 50);
+        },
+
+        _renderGanttNow() {
+          // Vérification 1 : librairie Frappe Gantt chargée ?
+          if (typeof Gantt === "undefined") {
+            console.error("[Gantt] Librairie Frappe Gantt non chargée. CDN bloqué ?");
+            this.showToast("Librairie Gantt non chargée — vérifiez la console", "error", 5000);
+            return;
+          }
+          // Vérification 2 : tâches à afficher ?
+          if (this.planningTasks.length === 0) {
+            console.log("[Gantt] Aucune tâche à afficher.");
+            return;
+          }
+          // Vérification 3 : l'élément SVG est-il dans le DOM ?
           const svg = document.getElementById("gantt-svg");
-          if (!svg || this.planningTasks.length === 0) return;
+          if (!svg) {
+            console.error("[Gantt] Élément SVG #gantt-svg introuvable dans le DOM.");
+            return;
+          }
           // Vider le SVG (Frappe Gantt n'a pas de destroy() officiel)
           svg.innerHTML = "";
           try {
+            console.log("[Gantt] Rendu de", this.planningTasks.length, "tâches", this.planningTasks);
             this._ganttInstance = new Gantt(svg, this.planningTasks, {
               view_mode: this.planningViewMode || "Week",
               bar_height: 24,
@@ -4408,8 +4432,10 @@
                 this._persistGanttProgressChange(task, progress);
               },
             });
+            console.log("[Gantt] Rendu OK");
           } catch (err) {
-            console.error("Erreur Frappe Gantt :", err);
+            console.error("[Gantt] Erreur Frappe Gantt :", err);
+            this.showToast("Erreur Gantt : " + (err.message || err), "error", 5000);
           }
         },
 
