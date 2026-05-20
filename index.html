@@ -153,7 +153,7 @@
             </button>
           </form>
 
-          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v3.0</p>
+          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v3.1</p>
         </div>
       </div>
     </template>
@@ -2465,15 +2465,24 @@
                   <template x-if="visiteForm.type_visite === 'VT'">
                     <div class="bg-orange-50 border border-orange-200 rounded-md p-3">
                       <label class="block text-xs font-bold text-orange-800 mb-1 uppercase tracking-wide">
-                        🏢 Entreprise concernée <span class="text-red-500">*</span>
+                        🏢 Entreprise / responsable concerné <span class="text-red-500">*</span>
                       </label>
-                      <p class="text-xs text-orange-700 mb-2">Sélectionnez l'entreprise visée par cette visite technique (parmi les intervenants liés au chantier).</p>
+                      <p class="text-xs text-orange-700 mb-2">Sélectionnez l'entreprise visée, ou Phenix Solar pour une visite technique interne.</p>
                       <select x-model="visiteForm.entreprise_id" @change="onVisiteFormChange()" required
                         class="w-full px-3 py-2 border border-orange-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white">
-                        <option value="">— Choisir une entreprise —</option>
-                        <template x-for="i in (chantierIntervenants || []).filter(i => !i.membre_phenix_solar)" :key="i.id">
-                          <option :value="i.id" x-text="(i.societe ? i.societe + ' — ' : '') + i.nom_complet + (i.type ? ' (' + i.type + ')' : '')"></option>
-                        </template>
+                        <option value="">— Choisir —</option>
+                        <!-- Groupe Phenix Solar (interne) -->
+                        <optgroup label="🟦 Phenix Solar (interne)">
+                          <template x-for="i in (chantierIntervenants || []).filter(i => i.membre_phenix_solar)" :key="'ph-' + i.id">
+                            <option :value="i.id" x-text="i.nom_complet + (i.fonction ? ' — ' + i.fonction : '')"></option>
+                          </template>
+                        </optgroup>
+                        <!-- Groupe entreprises externes -->
+                        <optgroup label="🟧 Entreprises externes">
+                          <template x-for="i in (chantierIntervenants || []).filter(i => !i.membre_phenix_solar)" :key="'ext-' + i.id">
+                            <option :value="i.id" x-text="(i.societe ? i.societe + ' — ' : '') + i.nom_complet + (i.type ? ' (' + i.type + ')' : '')"></option>
+                          </template>
+                        </optgroup>
                       </select>
                       <p x-show="!visiteForm.entreprise_id" class="text-xs text-orange-600 mt-1 italic">⚠ Ce champ est obligatoire pour une VT.</p>
                     </div>
@@ -5359,8 +5368,14 @@
         // VC → VC01, VC02, VC03...
         // VT → VT-01, VT-02, VT-03...
         async getNextNumeroVisite(typeVisite = "VC") {
+          // Format de sortie
+          const formatNum = (n) => typeVisite === "VT"
+            ? "VT-" + String(n).padStart(2, "0")
+            : "VC" + String(n).padStart(2, "0");
+
           if (!this.selectedChantier) {
-            return typeVisite === "VT" ? "VT-01" : "VC01";
+            console.warn("[getNextNumeroVisite] selectedChantier absent → fallback 01");
+            return formatNum(1);
           }
 
           const { data, error } = await supabaseClient
@@ -5369,26 +5384,33 @@
             .eq("chantier_id", this.selectedChantier.id)
             .eq("type_visite", typeVisite);
 
-          if (error || !data || data.length === 0) {
-            return typeVisite === "VT" ? "VT-01" : "VC01";
+          if (error) {
+            console.warn("[getNextNumeroVisite] erreur requête :", error.message);
+            return formatNum(1);
+          }
+          if (!data || data.length === 0) {
+            return formatNum(1);
           }
 
-          // Extraire les nombres selon le type
+          // Extraire le plus grand nombre présent dans les numéros existants.
+          // On extrait TOUT nombre du champ (robuste : marche pour "VT-01", "VT01", "VT 1", "01"...).
           let maxNum = 0;
-          const regex = typeVisite === "VT" ? /VT-?(\d+)/i : /VC(\d+)/i;
           for (const v of data) {
-            const match = (v.numero_vc || "").match(regex);
-            if (match) {
-              const num = parseInt(match[1]);
-              if (num > maxNum) maxNum = num;
+            const matches = (v.numero_vc || "").match(/(\d+)/g);
+            if (matches) {
+              for (const m of matches) {
+                const num = parseInt(m, 10);
+                if (num > maxNum) maxNum = num;
+              }
             }
           }
 
-          const next = maxNum + 1;
-          if (typeVisite === "VT") {
-            return "VT-" + String(next).padStart(2, "0");
+          // Fallback : si aucun nombre extrait mais des VT existent, baser sur le compte
+          if (maxNum === 0 && data.length > 0) {
+            maxNum = data.length;
           }
-          return "VC" + (next < 10 ? "0" + next : next);
+
+          return formatNum(maxNum + 1);
         },
 
         // Conservé pour compatibilité (ancien nom — peut être appelé ailleurs)
@@ -5500,12 +5522,16 @@
           }
 
           const labelType = this.visiteForm.type_visite === "VT" ? "Visite technique" : "Visite";
-          this.showToast(labelType + " créée ✓", "success");
-          // Passer en mode édition de la visite créée
-          this.visiteForm.id = data.id;
-          this.autoSaveStatus = "saved";
+          this.showToast(labelType + " créée ✓ — vous pouvez ajouter des remarques", "success");
           // Recharger la liste des visites en arrière-plan
           await this.loadChantierDetails();
+          // Fermer le formulaire et aller DIRECTEMENT sur la page détail de la visite
+          // (où on saisit les réserves/remarques), au lieu de rester sur le formulaire.
+          if (this.autoSaveTimer) { clearTimeout(this.autoSaveTimer); this.autoSaveTimer = null; }
+          this.autoSaveStatus = null;
+          this.modal = null;
+          // data contient la visite créée → on l'ouvre en vue détail
+          await this.openVisiteSmart(data);
         },
 
         // ===== SAUVEGARDE D'UNE VISITE EXISTANTE =====
