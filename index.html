@@ -153,7 +153,7 @@
             </button>
           </form>
 
-          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v3.1</p>
+          <p class="text-center text-gray-400 text-xs mt-6">© Phenix Solar — Tous droits réservés · v3.2</p>
         </div>
       </div>
     </template>
@@ -336,7 +336,7 @@
               <!-- Barre de recherche surélevée -->
               <div class="mb-5 relative">
                 <input type="text" x-model="searchQuery" @input="performSearch()"
-                  placeholder="🔍 Rechercher chantier, visite, réserve..."
+                  placeholder="🔍 Rechercher chantier, visite, remarque..."
                   class="w-full px-4 py-3 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-phenix-blue text-base shadow-md ring-1 ring-gray-200" />
 
                 <!-- Résultats de recherche -->
@@ -381,7 +381,7 @@
                 <div class="bg-white rounded-xl p-3 shadow-sm border border-gray-200">
                   <div class="flex items-center gap-2 mb-1">
                     <div class="w-7 h-7 rounded-lg bg-orange-100 flex items-center justify-center text-base">📌</div>
-                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Réserves</p>
+                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Remarques</p>
                   </div>
                   <p class="text-3xl font-bold text-orange-600 leading-none" x-text="dashStats.reservesOuvertes"></p>
                   <p class="text-[10px] text-gray-500 mt-1">ouvertes</p>
@@ -653,7 +653,7 @@
                       <span class="text-gray-400">📍</span>
                       <span x-show="c.adresse" x-text="c.adresse"></span><span x-show="c.adresse && (c.cp || c.ville)">, </span><span x-show="c.cp" x-text="c.cp"></span> <span x-show="c.ville" x-text="c.ville"></span>
                     </p>
-                    <!-- Footer avec stats clés : kWc / nb visites / nb réserves -->
+                    <!-- Footer avec stats clés : kWc / nb visites / nb remarques -->
                     <div class="flex items-center gap-4 pt-3 border-t border-gray-100 flex-wrap">
                       <div x-show="c.puissance_kwc" class="flex items-center gap-1.5">
                         <span class="text-phenix-blue font-bold text-base" x-text="c.puissance_kwc"></span>
@@ -669,7 +669,7 @@
                         <span class="font-bold text-base"
                           :class="c.reserves_count > 0 ? 'text-orange-600' : 'text-gray-900'"
                           x-text="c.reserves_count || 0"></span>
-                        <span class="text-xs text-gray-500" x-text="(c.reserves_count === 1 ? 'réserve' : 'réserves')"></span>
+                        <span class="text-xs text-gray-500" x-text="(c.reserves_count === 1 ? 'remarque' : 'remarques')"></span>
                       </div>
                     </div>
                     <p x-show="c.description" class="text-xs text-gray-500 mt-3 line-clamp-2" x-text="c.description"></p>
@@ -902,10 +902,10 @@
               </template>
             </section>
 
-            <!-- Réserves ouvertes -->
+            <!-- Remarques ouvertes -->
             <section x-show="reservesOuvertes.length > 0">
               <h2 class="text-xl font-bold text-gray-900 mb-3">
-                Réserves ouvertes (<span x-text="reservesOuvertes.length"></span>)
+                Remarques ouvertes (<span x-text="reservesOuvertes.length"></span>)
               </h2>
               <div class="bg-white rounded-lg shadow-sm overflow-hidden">
                 <ul class="divide-y divide-gray-100">
@@ -1261,11 +1261,11 @@
               </template>
 
 
-              <!-- Réserves -->
+              <!-- Remarques -->
               <section class="bg-white rounded-lg shadow-sm overflow-hidden">
                 <div class="bg-phenix-blue text-white px-4 py-2.5 border-l-4 border-phenix-yellow flex items-center justify-between">
                   <h3 class="font-bold text-sm uppercase tracking-wide">
-                    Réserves & actions de suivi (<span x-text="reservesVisite.length"></span>)
+                    Remarques & actions de suivi (<span x-text="reservesVisite.length"></span>)
                   </h3>
                   <button @click="openReserveForm()" 
                     class="bg-phenix-yellow hover:opacity-90 text-phenix-blue-dark font-bold py-1 px-3 rounded text-xs">
@@ -1278,7 +1278,7 @@
                       <template x-for="r in reservesVisite" :key="r.id">
                         <div class="border-2 rounded-md p-3 transition-colors"
                           :class="getReserveBoxClass(r)">
-                          <!-- Badge "Reportée de" si réserve héritée -->
+                          <!-- Badge "Reportée de" si remarque héritée -->
                           <div x-show="r._reportee && r.statut === 'Ouverte'" class="text-xs text-phenix-blue mb-2 flex items-center gap-1">
                             ↪ <span class="font-medium">Reportée de <span x-text="r.vc_origine"></span></span>
                           </div>
@@ -1373,7 +1373,7 @@
                     </div>
                   </template>
                   <template x-if="reservesVisite.length === 0">
-                    <p class="text-sm text-gray-500 italic">Aucune réserve sur cette visite. Cliquez sur "+ Nouvelle" pour en créer une.</p>
+                    <p class="text-sm text-gray-500 italic">Aucune remarque sur cette visite. Cliquez sur "+ Nouvelle" pour en créer une.</p>
                   </template>
                 </div>
               </section>
@@ -1523,7 +1523,7 @@
                     <span x-text="suppressionVisite.numero_vc"></span>
                     (<span x-text="formatDateLong(suppressionVisite.date_visite)"></span>)
                   </p>
-                  <p class="text-red-800">Cette action est <strong>irréversible</strong>. La visite, ses réserves et ses photos seront effacées de la base et du stockage.</p>
+                  <p class="text-red-800">Cette action est <strong>irréversible</strong>. La visite, ses remarques et ses photos seront effacées de la base et du stockage.</p>
                 </div>
 
                 <p class="text-sm text-gray-700">Avant de supprimer, vous pouvez télécharger une copie pour vos archives :</p>
@@ -1535,7 +1535,7 @@
                     <span class="text-2xl">📄</span>
                     <div class="flex-1">
                       <p class="font-bold text-gray-900">Télécharger le rapport PDF</p>
-                      <p class="text-xs text-gray-600">Génère le PDF complet de la visite avec ses réserves et photos.</p>
+                      <p class="text-xs text-gray-600">Génère le PDF complet de la visite avec ses remarques et photos.</p>
                     </div>
                     <span x-show="suppressionStep === 'downloading-pdf'" class="text-xs text-blue-600 animate-pulse">…</span>
                   </button>
@@ -1548,7 +1548,7 @@
                       <p class="font-bold text-gray-900">Télécharger les photos (ZIP)</p>
                       <p class="text-xs text-gray-600">
                         <span x-show="suppressionPhotosCount > 0">
-                          <span x-text="suppressionPhotosCount"></span> photo(s) liée(s) à la visite et à ses réserves.
+                          <span x-text="suppressionPhotosCount"></span> photo(s) liée(s) à la visite et à ses remarques.
                         </span>
                         <span x-show="suppressionPhotosCount === 0" class="italic">Aucune photo liée — bouton désactivé.</span>
                       </p>
@@ -1629,7 +1629,7 @@
               </button>
             </div>
 
-            <!-- Réserves de la VI -->
+            <!-- Remarques de la VI -->
             <section class="bg-white rounded-lg shadow-sm overflow-hidden">
               <div class="bg-amber-600 text-white px-4 py-2.5 flex items-center justify-between">
                 <h3 class="font-bold text-sm uppercase tracking-wide">
@@ -1838,7 +1838,7 @@
             <!-- Hero -->
             <div class="px-5 py-5 text-white shadow-md" style="background: linear-gradient(135deg, #0D4484, #08305F);">
               <h1 class="text-xl font-bold mb-1">📅 Planning chantier</h1>
-              <p class="text-blue-100 text-xs">Visites, réserves et phases sur une frise temporelle. <span class="text-phenix-yellow">Cliquer-glisser</span> les barres pour reprogrammer.</p>
+              <p class="text-blue-100 text-xs">Visites, remarques et phases sur une frise temporelle. <span class="text-phenix-yellow">Cliquer-glisser</span> les barres pour reprogrammer.</p>
             </div>
 
             <div class="p-4">
@@ -2226,7 +2226,7 @@
                     <div class="flex-1">
                       <span class="text-sm font-medium text-gray-900">⚡ Membre Phenix Solar</span>
                       <p class="text-xs text-gray-600 mt-0.5">
-                        Cocher si cette personne fait partie de l'équipe Phenix Solar (apparaîtra dans la liste des responsables visite/réserve).
+                        Cocher si cette personne fait partie de l'équipe Phenix Solar (apparaîtra dans la liste des responsables visite/remarque).
                       </p>
                     </div>
                   </label>
@@ -2737,7 +2737,7 @@
                       placeholder="Listez les remarques : points conformes, non-conformités, observations techniques, écarts qualité, manquements…"
                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"></textarea>
                   </div>
-                  <p class="text-xs text-gray-500 italic">💡 Les actions correctives associées sont à formaliser dans l'onglet "✅ Actions". Les réserves spécifiques à la VT (numérotées R-VT-…) s'ajoutent depuis la page de la visite.</p>
+                  <p class="text-xs text-gray-500 italic">💡 Les actions correctives associées sont à formaliser dans l'onglet "✅ Actions". Les remarques spécifiques à la VT (numérotées R-VT-…) s'ajoutent depuis la page de la visite.</p>
                 </div>
 
                 <!-- Onglet ACTIONS (VT uniquement) -->
@@ -3017,13 +3017,13 @@
           </div>
         </template>
 
-        <!-- ===== MODALE RÉSERVE (création/édition) ===== -->
+        <!-- ===== MODALE REMARQUE (création/édition) ===== -->
         <template x-if="modal === 'reserve'">
           <div class="fixed inset-0 bg-black/50 z-[60] flex items-start sm:items-center justify-center p-2 sm:p-4 overflow-y-auto" @click.self="closeReserveModal()">
             <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full my-4">
               <div class="bg-phenix-blue text-white px-4 py-3 rounded-t-lg flex items-center justify-between sticky top-0">
                 <h2 class="font-bold text-lg">
-                  <span x-text="reserveForm.id ? 'Modifier la réserve' : 'Nouvelle réserve'"></span>
+                  <span x-text="reserveForm.id ? 'Modifier la remarque' : 'Nouvelle remarque'"></span>
                   <span x-show="reserveForm.numero" class="text-phenix-yellow"> — <span x-text="reserveForm.numero"></span></span>
                 </h2>
                 <button @click="closeReserveModal()" class="text-white/80 hover:text-white text-xl leading-none">×</button>
@@ -3036,7 +3036,7 @@
                   <input type="text" x-model="reserveForm.description_courte" required maxlength="200"
                     placeholder="Mettre en place les clôtures Heras"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-phenix-blue" />
-                  <p class="text-xs text-gray-500 mt-1">Une phrase qui résume la réserve</p>
+                  <p class="text-xs text-gray-500 mt-1">Une phrase qui résume la remarque</p>
                 </div>
 
                 <!-- Description complète -->
@@ -3139,10 +3139,10 @@
                   </div>
                 </div>
 
-                <!-- ===== Photos liées à la réserve =====
+                <!-- ===== Photos liées à la remarque =====
                      Toujours visible (création comme édition).
                      - En création : les photos sont stockées en mémoire (pendingReservePhotos)
-                       et seront uploadées à la création de la réserve.
+                       et seront uploadées à la création de la remarque.
                      - En édition : les photos déjà en BDD (photosReserve) s'affichent.
                        Le bouton "+ Photo" uploade directement avec le reserve_id existant. -->
                 <div class="border-t border-gray-200 pt-4">
@@ -3194,7 +3194,7 @@
 
                   <!-- Message si aucune photo -->
                   <template x-if="photosReserve.length === 0 && pendingReservePhotos.length === 0">
-                    <p class="text-xs text-gray-500 italic">Aucune photo. Ajoutez-en pour illustrer la réserve.</p>
+                    <p class="text-xs text-gray-500 italic">Aucune photo. Ajoutez-en pour illustrer la remarque.</p>
                   </template>
                 </div>
 
@@ -3209,7 +3209,7 @@
                   </button>
                   <button type="submit" :disabled="formLoading"
                     class="bg-phenix-blue hover:bg-phenix-blue-dark text-white font-medium py-2 px-5 rounded-md transition-colors disabled:opacity-50">
-                    <span x-text="formLoading ? 'Enregistrement...' : (reserveForm.id ? 'Mettre à jour' : 'Créer la réserve')"></span>
+                    <span x-text="formLoading ? 'Enregistrement...' : (reserveForm.id ? 'Mettre à jour' : 'Créer la remarque')"></span>
                   </button>
                 </div>
               </form>
@@ -3217,12 +3217,12 @@
           </div>
         </template>
 
-        <!-- ===== MODALE LEVÉE DE RÉSERVE ===== -->
+        <!-- ===== MODALE LEVÉE DE REMARQUE ===== -->
         <template x-if="modal === 'lever'">
           <div class="fixed inset-0 bg-black/50 z-[60] flex items-start sm:items-center justify-center p-2 sm:p-4 overflow-y-auto" @click.self="closeModal()">
             <div class="bg-white rounded-lg shadow-xl max-w-lg w-full my-4">
               <div class="bg-green-700 text-white px-4 py-3 rounded-t-lg flex items-center justify-between">
-                <h2 class="font-bold text-lg">✓ Lever la réserve</h2>
+                <h2 class="font-bold text-lg">✓ Lever la remarque</h2>
                 <button @click="closeModal()" class="text-white/80 hover:text-white text-xl leading-none">×</button>
               </div>
               <form @submit.prevent="confirmLever()" class="p-4 sm:p-6 space-y-4">
@@ -3242,7 +3242,7 @@
                   <textarea x-model="leverForm.commentaire_levee" rows="3"
                     placeholder="Clôtures installées le 30/05. Affichage réglementaire OK."
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"></textarea>
-                  <p class="text-xs text-gray-500 mt-1">Comment la réserve a-t-elle été traitée ?</p>
+                  <p class="text-xs text-gray-500 mt-1">Comment la remarque a-t-elle été traitée ?</p>
                 </div>
 
                 <template x-if="formError">
@@ -3381,7 +3381,7 @@
                 <div class="bg-phenix-blue-light/40 border border-phenix-blue/20 rounded-md p-3 text-sm">
                   <span x-show="photoForm.attachee_a === 'visite'">📌 Photo liée à la visite <strong x-text="selectedVisite?.numero_vc"></strong></span>
                   <span x-show="photoForm.attachee_a === 'chantier'">📌 Photo générale du chantier <strong x-text="selectedChantier?.code"></strong></span>
-                  <span x-show="photoForm.attachee_a === 'reserve'">📌 Photo liée à la réserve <strong x-text="reserveForm?.numero"></strong></span>
+                  <span x-show="photoForm.attachee_a === 'reserve'">📌 Photo liée à la remarque <strong x-text="reserveForm?.numero"></strong></span>
                 </div>
 
                 <!-- Sélection fichier(s) - 2 boutons pour clarté mobile -->
@@ -3706,7 +3706,7 @@
         autoSaveStatus: null, // null | 'saving' | 'saved' | 'error'
         autoSaveTimer: null,
 
-        // Form réserve
+        // Form remarque
         reserveForm: { id: null, numero: "", description_courte: "", description_complete: "", action_attendue: "", responsable: "", responsable_id: null, responsable_societe: "", responsable_type: "", echeance: "", priorite: "Normale", categorie: "", _nb_rappels: 0 },
         leverForm: { id: null, numero: "", description_courte: "", date_levee: "", commentaire_levee: "" },
 
@@ -3714,10 +3714,10 @@
         photosVisite: [],
         photosChantier: [],
         photosReserve: [],
-        // Photos d'une réserve en attente d'upload : utilisé quand on ajoute des photos
-        // AVANT que la réserve ne soit créée (pas de reserve_id encore disponible).
+        // Photos d'une remarque en attente d'upload : utilisé quand on ajoute des photos
+        // AVANT que la remarque ne soit créée (pas de reserve_id encore disponible).
         // Chaque entrée : { id: tempId, fileBlob, previewUrl, legende, localisation, date_prise_vue }
-        // À la création de la réserve dans saveReserve(), ce buffer est dépilé et chaque photo
+        // À la création de la remarque dans saveReserve(), ce buffer est dépilé et chaque photo
         // est uploadée avec le reserve_id qu'on vient de récupérer. Si l'utilisateur annule, on
         // révoque les blob URLs et on vide le buffer (rien n'a été uploadé).
         pendingReservePhotos: [],
@@ -3824,7 +3824,7 @@
 
         // ===== ARCHIVAGE DES VISITES =====
         // Archiver une visite : la sortir de la liste principale (toujours en BDD).
-        // Ses réserves restent en BDD mais ne remontent plus puisque la visite mère ne se charge plus.
+        // Ses remarques restent en BDD mais ne remontent plus puisque la visite mère ne se charge plus.
         async archiverVisite(visite) {
           if (!visite || !visite.id) return;
           const labelType = visite.type_visite === "VT" ? "visite technique" : visite.type_visite === "VI" ? "note interne" : "visite";
@@ -3900,7 +3900,7 @@
           if (!visite || !visite.id) return;
           this.suppressionVisite = visite;
           this.suppressionStep = "init";
-          // Compter les photos liées (visite + ses réserves) pour info utilisateur
+          // Compter les photos liées (visite + ses remarques) pour info utilisateur
           let photosCount = 0;
           try {
             // Photos directes de la visite
@@ -3909,7 +3909,7 @@
               .select("id", { count: "exact", head: true })
               .eq("visite_id", visite.id);
             photosCount += c1 || 0;
-            // Photos des réserves de cette visite
+            // Photos des remarques de cette visite
             const { data: reserves } = await supabaseClient
               .from("reserves")
               .select("id")
@@ -3940,7 +3940,7 @@
             // On charge la visite comme si on l'ouvrait, génère le PDF, puis on revient.
             const sauveSelectedVisite = this.selectedVisite;
             this.selectedVisite = this.suppressionVisite;
-            // Charger les réserves et photos pour le PDF
+            // Charger les remarques et photos pour le PDF
             await this.loadReservesVisite();
             await this.loadPhotosVisite();
             // Construire les destinataires par défaut : on prend ceux de la visite (déjà sauvegardés)
@@ -3970,7 +3970,7 @@
               .from("photos")
               .select("*")
               .eq("visite_id", this.suppressionVisite.id);
-            // Photos des réserves de la visite (avec leur numéro de réserve pour le nom de fichier)
+            // Photos des remarques de la visite (avec leur numéro de remarque pour le nom de fichier)
             const { data: reserves } = await supabaseClient
               .from("reserves")
               .select("id, numero")
@@ -4000,7 +4000,7 @@
                 const resp = await fetch(p.url_storage);
                 if (!resp.ok) continue;
                 const blob = await resp.blob();
-                // Nom de fichier : prefix selon contexte (visite ou réserve)
+                // Nom de fichier : prefix selon contexte (visite ou remarque)
                 const ext = (p.url_storage.split('.').pop() || "jpg").split("?")[0].toLowerCase();
                 const safeExt = ext.length <= 5 ? ext : "jpg";
                 let nom;
@@ -4039,24 +4039,24 @@
         },
 
         // Étape 3 : suppression définitive en cascade
-        // (réserves de la visite → photos de la visite et des réserves → visite)
+        // (remarques de la visite → photos de la visite et des remarques → visite)
         // Les fichiers du storage Supabase sont aussi supprimés pour ne pas garder d'orphelins.
         async confirmerSuppressionVisite() {
           if (!this.suppressionVisite) return;
-          if (!confirm(`SUPPRESSION DÉFINITIVE de la visite ${this.suppressionVisite.numero_vc} ?\n\nCette action est IRRÉVERSIBLE :\n- la visite, ses réserves, ses photos et ses fichiers seront supprimés\n- aucun retour arrière possible\n\nÊtes-vous sûr ?`)) {
+          if (!confirm(`SUPPRESSION DÉFINITIVE de la visite ${this.suppressionVisite.numero_vc} ?\n\nCette action est IRRÉVERSIBLE :\n- la visite, ses remarques, ses photos et ses fichiers seront supprimés\n- aucun retour arrière possible\n\nÊtes-vous sûr ?`)) {
             return;
           }
           this.suppressionStep = "deleting";
           const visiteId = this.suppressionVisite.id;
           try {
-            // 1. Récupérer les réserves de la visite (pour leurs photos)
+            // 1. Récupérer les remarques de la visite (pour leurs photos)
             const { data: reserves } = await supabaseClient
               .from("reserves")
               .select("id")
               .eq("visite_id", visiteId);
             const rIds = (reserves || []).map(r => r.id);
 
-            // 2. Récupérer toutes les photos à supprimer (directes + réserves) pour leurs path_storage
+            // 2. Récupérer toutes les photos à supprimer (directes + remarques) pour leurs path_storage
             let photosASupp = [];
             const { data: phVisite } = await supabaseClient
               .from("photos")
@@ -4085,7 +4085,7 @@
               await supabaseClient.from("photos").delete().in("id", photoIds);
             }
 
-            // 5. Supprimer les réserves de la visite
+            // 5. Supprimer les remarques de la visite
             if (rIds.length > 0) {
               await supabaseClient.from("reserves").delete().in("id", rIds);
             }
@@ -4152,8 +4152,8 @@
 
         // ===== DATA LOADING =====
         async loadChantiers() {
-          // On charge aussi les compteurs visites et réserves ouvertes via Supabase aggregate
-          // visites: tous les types (VC + VT + VI), réserves: uniquement les ouvertes
+          // On charge aussi les compteurs visites et remarques ouvertes via Supabase aggregate
+          // visites: tous les types (VC + VT + VI), remarques: uniquement les ouvertes
           const { data, error } = await supabaseClient
             .from("chantiers")
             .select("*, visites(count), reserves(count)")
@@ -4232,7 +4232,7 @@
           });
           this.liens = liensTries;
 
-          // Réserves ouvertes (uniquement type VC) — affichées dans l'encart "Réserves ouvertes"
+          // Remarques ouvertes (uniquement type VC) — affichées dans l'encart "Remarques ouvertes"
           const { data: reserves } = await supabaseClient
             .from("reserves")
             .select("*")
@@ -4254,15 +4254,15 @@
 
           const typeVisite = this.selectedVisite.type_visite || 'VC';
 
-          // Charger toutes les réserves du chantier de ce type
+          // Charger toutes les remarques du chantier de ce type
           let query = supabaseClient
             .from("reserves")
             .select("*, visites(numero_vc, date_visite)")
             .eq("chantier_id", this.selectedVisite.chantier_id)
             .eq("type_reserve", typeVisite);
 
-          // Cloisonnement VT : on ne charge que les réserves de la même entreprise concernée
-          // → une réserve créée dans une VT Solution 30 ne remonte pas sur une VT Triangle Horizon.
+          // Cloisonnement VT : on ne charge que les remarques de la même entreprise concernée
+          // → une remarque créée dans une VT Solution 30 ne remonte pas sur une VT Triangle Horizon.
           // Si la VT n'a pas d'entreprise_id (cas anormal), on ne filtre pas pour ne rien casser.
           if (typeVisite === "VT" && this.selectedVisite.entreprise_id) {
             query = query.eq("entreprise_vt_id", this.selectedVisite.entreprise_id);
@@ -4278,11 +4278,11 @@
           const currentVisiteId = this.selectedVisite.id;
           const currentDateVisite = this.selectedVisite.date_visite;
 
-          // Règles d'affichage d'une réserve sur la VC/VT courante :
-          //  1. Réserve créée DANS cette visite (visite_id = id courant) → toujours affichée
-          //  2. Réserve OUVERTE créée AVANT cette visite (date_visite_origine <= date courante)
+          // Règles d'affichage d'une remarque sur la VC/VT courante :
+          //  1. Remarque créée DANS cette visite (visite_id = id courant) → toujours affichée
+          //  2. Remarque OUVERTE créée AVANT cette visite (date_visite_origine <= date courante)
           //     → reportée automatiquement
-          //  3. Réserve LEVÉE dont la levée a eu lieu AVANT ou PENDANT cette visite (date_levee <= date courante)
+          //  3. Remarque LEVÉE dont la levée a eu lieu AVANT ou PENDANT cette visite (date_levee <= date courante)
           //     → affichée en grisé en bas de liste pour mémoire (historique de levée toujours visible)
           const filtered = allReserves.filter(r => {
             // 1. créée dans cette visite
@@ -4311,7 +4311,7 @@
 
           this.reservesVisite = filtered;
 
-          // Mettre à jour derniere_vc des réserves reportées ouvertes (en arrière-plan)
+          // Mettre à jour derniere_vc des remarques reportées ouvertes (en arrière-plan)
           const reservesAReporter = filtered.filter(r =>
             r._reportee && r.derniere_vc !== this.selectedVisite.numero_vc
           );
@@ -4665,7 +4665,7 @@
           this.membresPhenix = data || [];
         },
 
-        // Charger tous les intervenants du chantier en cours (pour les sélecteurs Présents/Responsable réserve)
+        // Charger tous les intervenants du chantier en cours (pour les sélecteurs Présents/Responsable remarque)
         async loadChantierIntervenants() {
           if (!this.selectedChantier) {
             this.chantierIntervenants = [];
@@ -4726,7 +4726,7 @@
           });
         },
 
-        // Filtre par recherche dans les intervenants du chantier (pour présents/responsable réserve)
+        // Filtre par recherche dans les intervenants du chantier (pour présents/responsable remarque)
         filteredChantierIntervenants(query) {
           const q = (query || "").toLowerCase().trim();
           if (!q) return this.chantierIntervenants;
@@ -4772,7 +4772,7 @@
           return this.visiteForm.presents_ids.some(p => p.id === id);
         },
 
-        // === Responsable réserve ===
+        // === Responsable remarque ===
         selectResponsableReserve(intervenant) {
           this.reserveForm.responsable = intervenant.nom_complet;
           this.reserveForm.responsable_id = intervenant.id;
@@ -4929,8 +4929,8 @@
           this.formLoading = false;
         },
 
-        // Fermeture spécifique modale réserve : nettoie aussi le buffer photo en attente.
-        // Si la réserve a été créée (id présent), le buffer est déjà vide (dépilé dans saveReserve).
+        // Fermeture spécifique modale remarque : nettoie aussi le buffer photo en attente.
+        // Si la remarque a été créée (id présent), le buffer est déjà vide (dépilé dans saveReserve).
         // Si l'utilisateur annule avant création, on libère les blob URLs pour éviter les fuites.
         closeReserveModal() {
           this.clearPendingReservePhotos();
@@ -5526,7 +5526,7 @@
           // Recharger la liste des visites en arrière-plan
           await this.loadChantierDetails();
           // Fermer le formulaire et aller DIRECTEMENT sur la page détail de la visite
-          // (où on saisit les réserves/remarques), au lieu de rester sur le formulaire.
+          // (où on saisit les remarques/remarques), au lieu de rester sur le formulaire.
           if (this.autoSaveTimer) { clearTimeout(this.autoSaveTimer); this.autoSaveTimer = null; }
           this.autoSaveStatus = null;
           this.modal = null;
@@ -5588,7 +5588,7 @@
           return payload;
         },
 
-        // ===== RÉSERVES - CRÉATION / ÉDITION =====
+        // ===== REMARQUES - CRÉATION / ÉDITION =====
         async openReserveForm(reserve = null) {
           this.formError = "";
           this.photosReserve = []; // reset
@@ -5624,7 +5624,7 @@
                 this.reserveForm.responsable_type = found.type || "";
               }
             }
-            // Charger les photos liées à cette réserve
+            // Charger les photos liées à cette remarque
             await this.loadPhotosReserve(reserve.id);
           } else {
             // Mode création : auto-incrémenter le numéro
@@ -5735,8 +5735,8 @@
             // Type VC, VT ou VI selon le contexte
             payload.type_reserve = this.selectedVisite.type_visite || "VC";
 
-            // Réserves VT : cloisonnement par entreprise concernée.
-            // entreprise_vt_id = entreprise_id de la visite mère, pour qu'une réserve créée
+            // Remarques VT : cloisonnement par entreprise concernée.
+            // entreprise_vt_id = entreprise_id de la visite mère, pour qu'une remarque créée
             // dans une VT Solution 30 ne remonte que sur les VT futures pour Solution 30
             // (et pas sur une VT Triangle Horizon par exemple).
             if (payload.type_reserve === "VT" && this.selectedVisite.entreprise_id) {
@@ -5760,9 +5760,9 @@
           // Distinguer création vs mise à jour AVANT de muter reserveForm.id
           const wasCreation = !this.reserveForm.id;
 
-          // Recharger les réserves de la visite pour répercuter le changement
+          // Recharger les remarques de la visite pour répercuter le changement
           await this.loadReservesVisite();
-          // Recharger aussi les réserves ouvertes du chantier
+          // Recharger aussi les remarques ouvertes du chantier
           if (this.selectedChantier) {
             const { data: reserves } = await supabaseClient
               .from("reserves")
@@ -5776,16 +5776,16 @@
           if (wasCreation && result.data) {
             // ==== Création : on bascule en mode édition au lieu de fermer la modale ====
             // Comme ça l'utilisateur peut enchaîner directement sur l'ajout de photos,
-            // sans devoir fermer puis ré-ouvrir la réserve.
+            // sans devoir fermer puis ré-ouvrir la remarque.
             this.reserveForm.id = result.data.id;
             // Hydrater quelques champs qui dépendent de la BDD (numero auto, etc.)
             if (result.data.numero) this.reserveForm.numero = result.data.numero;
             if (result.data._nb_rappels !== undefined) this.reserveForm._nb_rappels = result.data._nb_rappels || 0;
 
             // ==== Dépiler les photos en attente ====
-            // Si l'utilisateur a ajouté des photos AVANT de créer la réserve, on les uploade
+            // Si l'utilisateur a ajouté des photos AVANT de créer la remarque, on les uploade
             // maintenant en les rattachant au reserve_id qu'on vient d'obtenir.
-            let toastMessage = "Réserve créée ✓ — vous pouvez ajouter des photos";
+            let toastMessage = "Remarque créée ✓ — vous pouvez ajouter des photos";
             if (this.pendingReservePhotos.length > 0) {
               const total = this.pendingReservePhotos.length;
               this.formLoading = true;
@@ -5804,23 +5804,23 @@
               // Nettoyer le buffer dans tous les cas (ce qui a échoué sera dit dans le toast)
               this.clearPendingReservePhotos();
               if (okCount === total) {
-                toastMessage = `Réserve créée ✓ — ${total} photo(s) ajoutée(s)`;
+                toastMessage = `Remarque créée ✓ — ${total} photo(s) ajoutée(s)`;
               } else {
-                toastMessage = `Réserve créée ✓ — ${okCount}/${total} photo(s) uploadée(s) (vérifiez les autres)`;
+                toastMessage = `Remarque créée ✓ — ${okCount}/${total} photo(s) uploadée(s) (vérifiez les autres)`;
               }
             }
 
-            // Recharger les photos liées (en BDD) maintenant que la réserve a un id
+            // Recharger les photos liées (en BDD) maintenant que la remarque a un id
             await this.loadPhotosReserve(result.data.id);
             this.showToast(toastMessage, "success");
           } else {
             // ==== Mise à jour : comportement habituel ====
-            this.showToast("Réserve mise à jour ✓", "success");
+            this.showToast("Remarque mise à jour ✓", "success");
             this.closeModal();
           }
         },
 
-        // ===== LEVÉE D'UNE RÉSERVE =====
+        // ===== LEVÉE D'UNE REMARQUE =====
         openLeverForm(reserve) {
           this.formError = "";
           const today = new Date().toISOString().split('T')[0];
@@ -5863,15 +5863,15 @@
             return;
           }
 
-          this.showToast("Réserve levée ✓", "success");
+          this.showToast("Remarque levée ✓", "success");
           this.closeModal();
           await this.loadReservesVisite();
         },
 
         async reouvrirReserve(reserve) {
           this.confirmData = {
-            title: "Rouvrir la réserve",
-            message: `La réserve ${reserve.numero} repassera au statut "Ouverte". La date et le commentaire de levée seront effacés.`,
+            title: "Rouvrir la remarque",
+            message: `La remarque ${reserve.numero} repassera au statut "Ouverte". La date et le commentaire de levée seront effacés.`,
             confirmLabel: "Rouvrir",
             action: async () => {
               const { error } = await supabaseClient
@@ -5888,7 +5888,7 @@
                 this.showToast("Erreur : " + error.message, "error");
                 return;
               }
-              this.showToast("Réserve rouverte ✓", "success");
+              this.showToast("Remarque rouverte ✓", "success");
               await this.loadReservesVisite();
             },
           };
@@ -5897,8 +5897,8 @@
 
         async supprimerReserve(reserve) {
           this.confirmData = {
-            title: "Supprimer la réserve",
-            message: `La réserve ${reserve.numero} sera définitivement supprimée. Cette action est irréversible.`,
+            title: "Supprimer la remarque",
+            message: `La remarque ${reserve.numero} sera définitivement supprimée. Cette action est irréversible.`,
             confirmLabel: "Supprimer",
             action: async () => {
               const { error } = await supabaseClient
@@ -5910,7 +5910,7 @@
                 this.showToast("Erreur : " + error.message, "error");
                 return;
               }
-              this.showToast("Réserve supprimée ✓", "success");
+              this.showToast("Remarque supprimée ✓", "success");
               await this.loadReservesVisite();
             },
           };
@@ -5950,14 +5950,14 @@
             .gte("date_visite", debutMois)
             .lte("date_visite", finMois);
 
-          // Réserves ouvertes (VC uniquement)
+          // Remarques ouvertes (VC uniquement)
           const { count: nbReserves } = await supabaseClient
             .from("reserves")
             .select("*", { count: "exact", head: true })
             .eq("statut", "Ouverte")
             .eq("type_reserve", "VC");
 
-          // Escalades (réserves ouvertes avec 2+ rappels, VC)
+          // Escalades (remarques ouvertes avec 2+ rappels, VC)
           const { count: nbEscalades } = await supabaseClient
             .from("reserves")
             .select("*", { count: "exact", head: true })
@@ -5974,7 +5974,7 @@
         },
 
         async loadDashEscalades() {
-          // Réserves avec 1+ rappel (VC uniquement)
+          // Remarques avec 1+ rappel (VC uniquement)
           const { data } = await supabaseClient
             .from("reserves")
             .select("*, chantiers(code, nom)")
@@ -5992,7 +5992,7 @@
         },
 
         async loadDashRetards() {
-          // Réserves en retard (échéance dépassée), sans rappel (sinon c'est dans escalades)
+          // Remarques en retard (échéance dépassée), sans rappel (sinon c'est dans escalades)
           const today = new Date().toISOString().split('T')[0];
           const { data } = await supabaseClient
             .from("reserves")
@@ -6012,7 +6012,7 @@
         },
 
         async loadDashEcheances() {
-          // Réserves avec échéance dans les 30 prochains jours
+          // Remarques avec échéance dans les 30 prochains jours
           const today = new Date();
           const todayStr = today.toISOString().split('T')[0];
           const in30days = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -6115,9 +6115,9 @@
 
         // ===== NAVIGATION DEPUIS DASHBOARD =====
         async goToReserve(reserve) {
-          // Aller à la visite correspondante de la réserve, et ouvrir l'édition de la réserve
+          // Aller à la visite correspondante de la remarque, et ouvrir l'édition de la remarque
           if (!reserve.visite_id) {
-            this.showToast("Réserve sans visite associée", "error");
+            this.showToast("Remarque sans visite associée", "error");
             return;
           }
 
@@ -6139,7 +6139,7 @@
           this.view = "visite";
           await this.loadReservesVisite();
           await this.loadPhotosVisite();
-          // Ouvrir directement le formulaire de la réserve après un petit délai (rendu)
+          // Ouvrir directement le formulaire de la remarque après un petit délai (rendu)
           setTimeout(() => {
             this.openReserveForm(reserve);
           }, 100);
@@ -6215,7 +6215,7 @@
             });
           }
 
-          // Réserves (numéro ou description)
+          // Remarques (numéro ou description)
           const { data: reserves } = await supabaseClient
             .from("reserves")
             .select("*, chantiers(code, nom)")
@@ -6225,7 +6225,7 @@
           for (const r of (reserves || [])) {
             results.push({
               type: "reserve",
-              typeLabel: "Réserve",
+              typeLabel: "Remarque",
               icon: "📌",
               id: r.id,
               title: `${r.numero} — ${r.description_courte || ""}`.substring(0, 80),
@@ -6453,7 +6453,7 @@
           await this.loadReservesVisite();
         },
 
-        // ===== AJOUTER UN RAPPEL À UNE RÉSERVE =====
+        // ===== AJOUTER UN RAPPEL À UNE REMARQUE =====
         async ajouterRappel(reserve) {
           const today = new Date().toISOString().split('T')[0];
           const currentVc = this.selectedVisite?.numero_vc || null;
@@ -6468,7 +6468,7 @@
 
           this.confirmData = {
             title: `Ajouter un rappel`,
-            message: `Confirmer l'envoi du rappel n°${newCount} pour la réserve ${reserve.numero} ?\n\nLa priorité sera automatiquement passée à "Haute".`,
+            message: `Confirmer l'envoi du rappel n°${newCount} pour la remarque ${reserve.numero} ?\n\nLa priorité sera automatiquement passée à "Haute".`,
             confirmLabel: `🔔 Envoyer rappel ${newCount}`,
             action: async () => {
               const { error } = await supabaseClient
@@ -6493,7 +6493,7 @@
           this.modal = "confirm";
         },
 
-        // ===== HELPERS VISUELS POUR LES RÉSERVES =====
+        // ===== HELPERS VISUELS POUR LES REMARQUES =====
         isRetard(reserve) {
           if (!reserve.echeance || reserve.statut !== "Ouverte") return false;
           const today = new Date().toISOString().split('T')[0];
@@ -6680,7 +6680,7 @@
             reader.onload = (e) => {
               const img = new Image();
               img.onload = () => {
-                // Calculer dimensions cibles (préserver ratio)
+                // Calculer dimensions cibles (premarquer ratio)
                 let width = img.width;
                 let height = img.height;
                 if (width > maxWidth) {
@@ -6729,7 +6729,7 @@
             return;
           }
 
-          // ===== Cas spécial : photo(s) de réserve avant que la réserve ne soit créée =====
+          // ===== Cas spécial : photo(s) de remarque avant que la remarque ne soit créée =====
           // Pas encore de reserve_id → on stocke en mémoire dans pendingReservePhotos.
           // L'upload se fera dans saveReserve() une fois qu'on aura un id.
           if (this.photoForm.attachee_a === "reserve" && !this.reserveForm.id) {
@@ -6744,8 +6744,8 @@
                 date_prise_vue: this.photoForm.date_prise_vue || null,
               });
             });
-            this.showToast(`${photosToSave.length} photo(s) ajoutée(s) — upload à la création de la réserve`, "success");
-            // Rester sur la modale réserve
+            this.showToast(`${photosToSave.length} photo(s) ajoutée(s) — upload à la création de la remarque`, "success");
+            // Rester sur la modale remarque
             this.modal = "reserve";
             this.formError = "";
             this.formLoading = false;
@@ -6798,7 +6798,7 @@
             // Mémoriser le type avant le reset (pour le rechargement ci-dessous)
             const attacheeA = this.photoForm.attachee_a;
 
-            // Si la photo est liée à une réserve EXISTANTE : on reste sur la modale réserve
+            // Si la photo est liée à une remarque EXISTANTE : on reste sur la modale remarque
             if (attacheeA === "reserve" && this.reserveForm.id) {
               this.modal = "reserve";
               this.formError = "";
@@ -6881,7 +6881,7 @@
         },
 
         // ===== HELPER : upload d'UNE photo en attente vers Supabase =====
-        // Utilisé après création d'une réserve pour dépiler pendingReservePhotos.
+        // Utilisé après création d'une remarque pour dépiler pendingReservePhotos.
         // Retourne true si ok, false si erreur (en cas d'erreur on log mais on n'interrompt pas).
         async _uploadPendingReservePhoto(pendingPhoto, reserveId) {
           try {
@@ -7779,7 +7779,7 @@
             doc.autoTable({
               startY: y,
               theme: "grid",
-              // Typo alignée sur le tableau réserves : fontSize 8, cellPadding 2
+              // Typo alignée sur le tableau remarques : fontSize 8, cellPadding 2
               styles: {
                 fontSize: 8,
                 cellPadding: 2,
@@ -7847,7 +7847,7 @@
               y = this.addSectionTitlePdf(doc, y, "SÉCURITÉ");
               if (this.selectedVisite.securite_intro) y = this.addParagraph(doc, y, this.selectedVisite.securite_intro);
               if (this.selectedVisite.securite_par_entreprise) y = this.addParagraph(doc, y, this.selectedVisite.securite_par_entreprise);
-              y += 2; // saut très réduit avant Réserves
+              y += 2; // saut très réduit avant Remarques
             }
           }
 
@@ -7870,12 +7870,12 @@
             }
           }
 
-          // ===== TABLEAU RÉSERVES =====
+          // ===== TABLEAU REMARQUES =====
           if (this.reservesVisite.length > 0) {
             this.checkPageBreak(doc, y, 30);
-            y = this.addSectionTitlePdf(doc, y, "RÉSERVES & ACTIONS DE SUIVI", isVT);
+            y = this.addSectionTitlePdf(doc, y, "REMARQUES & ACTIONS DE SUIVI", isVT);
 
-            // Trier les réserves : ouvertes critiques d'abord, levées en dernier
+            // Trier les remarques : ouvertes critiques d'abord, levées en dernier
             const sortedReserves = [...this.reservesVisite].sort((a, b) => {
               if (a.statut === "Levée" && b.statut !== "Levée") return 1;
               if (a.statut !== "Levée" && b.statut === "Levée") return -1;
@@ -7914,7 +7914,7 @@
                 
                 // Responsable + société sur 2 lignes
                 // Source de la société (par ordre de priorité) :
-                //   1. r.responsable_societe (stocké dans la réserve)
+                //   1. r.responsable_societe (stocké dans la remarque)
                 //   2. chantierIntervenants[responsable_id].societe (annuaire chantier)
                 //   3. rien
                 let responsableCell = r.responsable || "—";
@@ -8007,10 +8007,10 @@
           // ===== ANNEXE PHOTOS =====
           // Collecter toutes les photos liées à cette visite :
           //   - Photos directes de la visite (photosVisite)
-          //   - Photos de TOUTES les réserves affichées dans la visite (créées ici OU reportées d'une visite antérieure)
-          //     → permet de voir les photos d'une réserve même quand elle apparaît dans des visites postérieures
+          //   - Photos de TOUTES les remarques affichées dans la visite (créées ici OU reportées d'une visite antérieure)
+          //     → permet de voir les photos d'une remarque même quand elle apparaît dans des visites postérieures
           const reserveIdsAffichees = (this.reservesVisite || []).map(r => r.id).filter(Boolean);
-          // Mapping reserve_id → numero (pour étiqueter chaque photo de réserve dans la légende du PDF)
+          // Mapping reserve_id → numero (pour étiqueter chaque photo de remarque dans la légende du PDF)
           const reserveNumeroById = {};
           for (const r of (this.reservesVisite || [])) {
             reserveNumeroById[r.id] = r.numero;
@@ -8025,13 +8025,13 @@
                 .in('reserve_id', reserveIdsAffichees)
                 .order('created_at', { ascending: false });
               if (errPhotos) {
-                console.warn("Erreur chargement photos réserves:", errPhotos);
+                console.warn("Erreur chargement photos remarques:", errPhotos);
               }
               if (photosReserves && photosReserves.length > 0) {
                 photosAnnexe = photosAnnexe.concat(photosReserves);
               }
             } catch (e) {
-              console.warn("Exception chargement photos réserves:", e);
+              console.warn("Exception chargement photos remarques:", e);
             }
           }
 
@@ -8127,12 +8127,12 @@
               }
 
               // Légende sous l'image
-              // Préfixe par le n° de réserve si la photo est liée à une réserve
+              // Préfixe par le n° de remarque si la photo est liée à une remarque
               const numReserve = photo.reserve_id ? reserveNumeroById[photo.reserve_id] : null;
               doc.setFontSize(8);
               if (numReserve) {
-                // Photo liée à une réserve : badge orange/rouge avec n° de réserve
-                doc.setTextColor(220, 38, 38); // rouge pour signaler "réserve"
+                // Photo liée à une remarque : badge orange/rouge avec n° de remarque
+                doc.setTextColor(220, 38, 38); // rouge pour signaler "remarque"
                 doc.setFont("helvetica", "bold");
                 doc.text(numReserve, x, y + cellH - 13);
               } else {
